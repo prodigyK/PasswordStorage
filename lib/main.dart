@@ -5,21 +5,29 @@ import 'package:password_storage_app/screens/hosting_details_screen.dart';
 import 'package:password_storage_app/screens/hosting_screen.dart';
 import 'package:password_storage_app/screens/servers_screen.dart';
 import 'package:password_storage_app/screens/splash_screen.dart';
-import 'package:provider/provider.dart';
-import 'package:flutter_config/flutter_config.dart';
-
-import 'providers/app_config.dart';
-import 'providers/auth.dart';
-import 'providers/hosting_repository.dart';
-import 'providers/user_repository.dart';
 import 'screens/categories_screen.dart';
 import 'screens/settings.dart';
 import 'screens/user_details_screen.dart';
 import 'screens/user_screen.dart';
+import 'providers/auth.dart';
+import 'providers/hosting_repository.dart';
+import 'providers/user_repository.dart';
+import 'package:flutter/services.dart' show rootBundle;
+import 'package:provider/provider.dart';
+
+
+var secureData = {};
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await FlutterConfig.loadEnvVariables();
+
+  final path = await rootBundle.loadString('.env');
+  var fileData = path.split('\n');
+  fileData.forEach((line) {
+    if (line.isEmpty) return;
+    final array = line.split('=');
+    secureData.putIfAbsent(array[0], () => array[1]);
+  });
 
   runApp(MyApp());
 }
@@ -30,8 +38,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-//        ChangeNotifierProvider(create: (ctx) => AppConfig('config.yaml')),
-        ChangeNotifierProvider(create: (ctx) => Auth(FlutterConfig.get('firebaseWebKey'))),
+        ChangeNotifierProvider(create: (ctx) => Auth(secureData['firebaseWebKey'])),
         ChangeNotifierProxyProvider<Auth, UserRepository>(
           update: (ctx, auth, previousRepository) => UserRepository(
             auth.token,
@@ -75,9 +82,7 @@ class MyApp extends StatelessWidget {
               : FutureBuilder(
                   future: auth.tryAutoLogin(),
                   builder: (ctx, snapshot) {
-                    return snapshot.connectionState == ConnectionState.waiting
-                        ? SplashScreen()
-                        : AuthScreen();
+                    return snapshot.connectionState == ConnectionState.waiting ? SplashScreen() : AuthScreen();
                   }),
           routes: {
             UserScreen.routeName: (ctx) => UserScreen(),

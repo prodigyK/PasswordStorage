@@ -1,0 +1,1 @@
+-keep class com.prodigy.password_storage_app.BuildConfig { *; }

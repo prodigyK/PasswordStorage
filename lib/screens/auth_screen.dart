@@ -1,16 +1,16 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:password_storage_app/main.dart';
 import 'package:password_storage_app/providers/auth.dart';
 import 'package:password_storage_app/screens/splash_screen.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_config/flutter_config.dart';
 
 class AuthScreen extends StatelessWidget {
   Future<void> _login(BuildContext context) async {
     await Future.delayed(Duration(seconds: 2));
     await Provider.of<Auth>(context, listen: false).signIn(
-      FlutterConfig.get('firebaseLogin'),
-      FlutterConfig.get('firebasePass'),
+      secureData['firebaseLogin'],
+      secureData['firebasePass'],
     );
   }
 

@@ -1,8 +1,8 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_config/flutter_config.dart';
 import 'package:http/http.dart' as http;
+import 'package:password_storage_app/main.dart';
 import 'package:password_storage_app/models/http_exception.dart';
 
 import '../models/user.dart';
@@ -25,7 +25,7 @@ class UserRepository with ChangeNotifier {
 
   Future<void> fetchAndSetUsers([Sort sort = Sort.ALFABETIC]) async {
     final url = Uri.https(
-      FlutterConfig.get('firebaseDb'),
+      secureData['firebaseDb'],
       '/users.json',
       {'auth': _token},
     );
@@ -56,7 +56,7 @@ class UserRepository with ChangeNotifier {
 
   Future<void> addUser(User user) async {
     final url = Uri.https(
-      FlutterConfig.get('firebaseDb'),
+      secureData['firebaseDb'],
       '/users.json',
       {'auth': _token},
     );
@@ -77,7 +77,7 @@ class UserRepository with ChangeNotifier {
     final String id = user.id;
 
     final url = Uri.https(
-      FlutterConfig.get('firebaseDb'),
+      secureData['firebaseDb'],
       '/users/$id.json',
       {'auth': _token},
     );
@@ -99,7 +99,7 @@ class UserRepository with ChangeNotifier {
     final String id = user.id;
 
     final url = Uri.https(
-      FlutterConfig.get('firebaseDb'),
+      secureData['firebaseDb'],
       '/users/$id.json',
       {'auth': _token},
     );
