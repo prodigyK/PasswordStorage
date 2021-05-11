@@ -47,3 +47,4 @@ app.*.map.json
 /.env
 /lib/app_data.dart
 /pubspec.lock
+/.gradle
