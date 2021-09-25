@@ -104,6 +104,7 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(_isNew ? 'New User' : 'Details'),
+        backgroundColor: Colors.green.shade200,
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -238,7 +239,8 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
                     Row(
                       children: [
                         Expanded(
-                          child: CupertinoButton.filled(
+                          child: CupertinoButton(
+                            color: Colors.green.shade300,
                             child: Text(_isNew ? 'Add' : 'Change'),
                             onPressed: _saveForm,
                           ),

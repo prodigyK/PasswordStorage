@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:password_storage_app/models/user.dart';
 import 'package:password_storage_app/providers/user_repository.dart';
-import 'package:password_storage_app/screens/user_details_screen.dart';
+import 'package:password_storage_app/screens/users/user_details_screen.dart';
 import 'package:password_storage_app/widgets/user_item.dart';
 import 'package:provider/provider.dart';
 
@@ -47,7 +47,8 @@ class _UserScreenState extends State<UserScreen> {
 
     return Scaffold(
       appBar: AppBar(
-//        title: Text(args['title']),
+        backgroundColor: Colors.green.shade200,
+       title: Text('Users'),
         actions: [
           IconButton(
             icon: Icon(Icons.sort_by_alpha),

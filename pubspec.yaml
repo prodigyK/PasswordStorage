@@ -35,6 +35,9 @@ dependencies:
   shared_preferences: ^2.0.5
   flutter_config: ^1.0.8
   path: ^1.8.0
+  firebase_core: ^1.6.0
+  cloud_firestore: ^2.5.3
+  page_transition: ^2.0.2
 
 dev_dependencies:
   flutter_test:
