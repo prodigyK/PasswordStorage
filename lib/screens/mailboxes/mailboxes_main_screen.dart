@@ -1,11 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:password_storage_app/screens/mailboxes/mailboxes_all_screen.dart';
-import 'package:password_storage_app/screens/mailboxes/emails_by_domains_screen.dart';
-import 'package:password_storage_app/screens/mailboxes/emails_domains_screen.dart';
-import 'package:password_storage_app/screens/mailboxes/emails_services_screen.dart';
+import 'package:password_storage_app/screens/mailboxes/mailboxes_by_domains_screen.dart';
+import 'package:password_storage_app/screens/mailboxes/mail_domains_screen.dart';
+import 'package:password_storage_app/screens/mailboxes/mail_services_screen.dart';
 
-class EmailsScreen extends StatelessWidget {
+class MailboxesMainScreen extends StatelessWidget {
   static const routeName = '/emails-screen';
 
   @override
@@ -50,7 +50,7 @@ class EmailsScreen extends StatelessWidget {
                 categoryName: 'Mailboxes by Domains',
                 iconData: Icons.view_week_sharp,
                 onPressed: () {
-                  Navigator.pushNamed(context, MailboxByDomainScreen.routeName);
+                  Navigator.pushNamed(context, MailboxesByDomainsScreen.routeName);
                 },
               ),
               SizedBox(height: 16),
@@ -61,7 +61,7 @@ class EmailsScreen extends StatelessWidget {
                 categoryName: 'Domains',
                 iconData: Icons.domain,
                 onPressed: () {
-                  Navigator.pushNamed(context, MailboxDomainsScreen.routeName);
+                  Navigator.pushNamed(context, MailDomainsScreen.routeName);
                 },
               ),
               buildCategory(

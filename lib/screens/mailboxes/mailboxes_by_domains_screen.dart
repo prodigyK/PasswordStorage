@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 
-class MailboxByDomainScreen extends StatelessWidget {
-  static const String routeName = '/mailbox-domain';
+class MailboxesByDomainsScreen extends StatelessWidget {
+  static const String routeName = '/mailboxes-by-domains';
 
   @override
   Widget build(BuildContext context) {

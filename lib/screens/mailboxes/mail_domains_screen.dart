@@ -3,10 +3,10 @@ import 'package:password_storage_app/models/domain.dart';
 import 'package:password_storage_app/models/service.dart';
 import 'package:password_storage_app/providers/mail_domain_repository.dart';
 import 'package:password_storage_app/providers/mail_service_repository.dart';
-import 'package:password_storage_app/screens/mailboxes/emails_domains_detail_screen.dart';
+import 'package:password_storage_app/screens/mailboxes/mail_domains_detail_screen.dart';
 import 'package:provider/provider.dart';
 
-class MailboxDomainsScreen extends StatelessWidget {
+class MailDomainsScreen extends StatelessWidget {
   static const String routeName = '/mail-domains';
 
   @override
@@ -36,7 +36,7 @@ class MailboxDomainsScreen extends StatelessWidget {
               onPressed: () {
                 Navigator.pushNamed(
                   context,
-                  MailboxDomainDetailScreen.routeName,
+                  MailDomainsDetailScreen.routeName,
                   arguments: {'isNew': true},
                 );
               },
@@ -128,7 +128,7 @@ class DomainItem extends StatelessWidget {
         Domain domain = Domain.fromJson(docs[index].data() as Map<String, dynamic>, docID: docID);
         Navigator.pushNamed(
           context,
-          MailboxDomainDetailScreen.routeName,
+          MailDomainsDetailScreen.routeName,
           arguments: {'isNew': false, 'domain': domain},
         );
       },
