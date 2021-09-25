@@ -172,12 +172,12 @@ class _MailboxDetailScreenState extends State<MailboxDetailScreen> {
                         height: 2,
                         color: Colors.transparent,
                       ),
-                      onChanged: (Domain newValue) {
+                      onChanged: isNew ? (Domain newValue) {
                         setState(() {
                           selectedDomain = newValue;
                           fullEmail = _nameController.text + '@' + selectedDomain.name;
                         });
-                      },
+                      } : null,
                       items: domains.map<DropdownMenuItem<Domain>>((domain) {
                         return DropdownMenuItem<Domain>(
                           value: domain,

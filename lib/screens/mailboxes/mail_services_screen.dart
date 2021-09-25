@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:password_storage_app/models/service.dart';
 import 'package:password_storage_app/providers/mail_service_repository.dart';
-import 'package:password_storage_app/screens/mailboxes/emails_services_detail_screen.dart';
+import 'package:password_storage_app/screens/mailboxes/mail_services_detail_screen.dart';
 import 'package:provider/provider.dart';
 
 class MailServicesScreen extends StatelessWidget {

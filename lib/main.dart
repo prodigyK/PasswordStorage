@@ -6,16 +6,16 @@ import 'package:page_transition/page_transition.dart';
 import 'package:password_storage_app/providers/mail_domain_repository.dart';
 import 'package:password_storage_app/providers/mail_service_repository.dart';
 import 'package:password_storage_app/providers/mailbox_repository.dart';
-import 'package:password_storage_app/screens/auth_screen.dart';
+import 'package:password_storage_app/screens/auth/auth_screen.dart';
 import 'package:password_storage_app/screens/mailboxes/mailboxes_all_screen.dart';
-import 'package:password_storage_app/screens/mailboxes/emails_by_domains_screen.dart';
+import 'package:password_storage_app/screens/mailboxes/mailboxes_by_domains_screen.dart';
 import 'package:password_storage_app/screens/hostings/hosting_detail_screen.dart';
 import 'package:password_storage_app/screens/hostings/hosting_screen.dart';
-import 'package:password_storage_app/screens/mailboxes/emails_domains_detail_screen.dart';
-import 'package:password_storage_app/screens/mailboxes/emails_domains_screen.dart';
-import 'package:password_storage_app/screens/mailboxes/emails_screen.dart';
-import 'package:password_storage_app/screens/mailboxes/emails_services_detail_screen.dart';
-import 'package:password_storage_app/screens/mailboxes/emails_services_screen.dart';
+import 'package:password_storage_app/screens/mailboxes/mail_domains_detail_screen.dart';
+import 'package:password_storage_app/screens/mailboxes/mail_domains_screen.dart';
+import 'package:password_storage_app/screens/mailboxes/mailboxes_main_screen.dart';
+import 'package:password_storage_app/screens/mailboxes/mail_services_detail_screen.dart';
+import 'package:password_storage_app/screens/mailboxes/mail_services_screen.dart';
 import 'package:password_storage_app/screens/mailboxes/mailbox_detail_screen.dart';
 import 'package:password_storage_app/screens/servers_screen.dart';
 import 'package:password_storage_app/screens/splash_screen.dart';
@@ -108,9 +108,9 @@ class MyApp extends StatelessWidget {
           onGenerateRoute: (settings) {
             // print(settings.name);
             switch (settings.name) {
-              case EmailsScreen.routeName:
+              case MailboxesMainScreen.routeName:
                 return PageTransition(
-                  child: EmailsScreen(),
+                  child: MailboxesMainScreen(),
                   type: PageTransitionType.fade,
                   settings: settings,
                 );
@@ -150,9 +150,9 @@ class MyApp extends StatelessWidget {
                   settings: settings,
                 );
                 break;
-              case MailboxByDomainScreen.routeName:
+              case MailboxesByDomainsScreen.routeName:
                 return PageTransition(
-                  child: MailboxByDomainScreen(),
+                  child: MailboxesByDomainsScreen(),
                   type: PageTransitionType.fade,
                   settings: settings,
                 );
@@ -171,16 +171,16 @@ class MyApp extends StatelessWidget {
                   settings: settings,
                 );
                 break;
-              case MailboxDomainDetailScreen.routeName:
+              case MailDomainsDetailScreen.routeName:
                 return PageTransition(
-                  child: MailboxDomainDetailScreen(),
+                  child: MailDomainsDetailScreen(),
                   type: PageTransitionType.fade,
                   settings: settings,
                 );
                 break;
-              case MailboxDomainsScreen.routeName:
+              case MailDomainsScreen.routeName:
                 return PageTransition(
-                  child: MailboxDomainsScreen(),
+                  child: MailDomainsScreen(),
                   type: PageTransitionType.fade,
                   settings: settings,
                 );

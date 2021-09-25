@@ -1,10 +1,11 @@
-import 'package:firebase_core/firebase_core.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
+import 'package:password_storage_app/models/domain.dart';
 import 'package:password_storage_app/models/mailbox.dart';
+import 'package:password_storage_app/providers/mailbox_repository.dart';
 import 'package:password_storage_app/screens/mailboxes/mailbox_detail_screen.dart';
+import 'package:provider/provider.dart';
 
 class MailboxAllScreen extends StatefulWidget {
   static const String routeName = '/mailbox-all';
@@ -14,6 +15,33 @@ class MailboxAllScreen extends StatefulWidget {
 }
 
 class _MailboxAllScreenState extends State<MailboxAllScreen> {
+  var query;
+  bool firstInit = true;
+  String title = 'All Mailboxes';
+
+  @override
+  void didChangeDependencies() {
+    if (firstInit) {
+      final json = ModalRoute.of(context).settings.arguments as Map<String, dynamic>;
+      Domain domain = json['domain'];
+      if (domain == null) {
+        query = Provider.of<MailboxRepository>(context, listen: false).collection().where(
+              'domain_id',
+              isNotEqualTo: '',
+            );
+      } else {
+        title = domain.name;
+        query = Provider.of<MailboxRepository>(context, listen: false).collection().where(
+              'domain_id',
+              isEqualTo: domain.id,
+            );
+      }
+    }
+    firstInit = false;
+
+    super.didChangeDependencies();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Center(
@@ -35,7 +63,7 @@ class _MailboxAllScreenState extends State<MailboxAllScreen> {
         constraints: BoxConstraints(maxWidth: width),
         child: Scaffold(
           appBar: AppBar(
-              title: Text('All Mailboxes', style: TextStyle(color: Colors.white)),
+              title: Text(title, style: TextStyle(color: Colors.white)),
               backgroundColor: Colors.blue.shade200,
               actions: [
                 IconButton(
@@ -58,7 +86,7 @@ class _MailboxAllScreenState extends State<MailboxAllScreen> {
           body: Container(
             margin: EdgeInsets.only(top: 8.0),
             child: StreamBuilder(
-              stream: FirebaseFirestore.instance.collection('mailboxes').snapshots(),
+              stream: query.snapshots(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return Center(child: CircularProgressIndicator());
@@ -71,7 +99,7 @@ class _MailboxAllScreenState extends State<MailboxAllScreen> {
                         key: ValueKey(docs[i].id),
                         child: Container(
                           // color: Colors.black,
-                          margin: EdgeInsets.symmetric(horizontal: 8.0, vertical: 2.0),
+                          margin: EdgeInsets.symmetric(horizontal: 8.0, vertical: 1.0),
                           padding: EdgeInsets.symmetric(vertical: 2.0),
                           child: Card(
                             elevation: 3,

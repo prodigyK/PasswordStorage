@@ -8,14 +8,14 @@ import 'package:password_storage_app/providers/mail_domain_repository.dart';
 import 'package:password_storage_app/providers/mail_service_repository.dart';
 import 'package:provider/provider.dart';
 
-class MailboxDomainDetailScreen extends StatefulWidget {
+class MailDomainsDetailScreen extends StatefulWidget {
   static const String routeName = '/mail-domains-details';
 
   @override
-  _MailboxDomainDetailScreenState createState() => _MailboxDomainDetailScreenState();
+  _MailDomainsDetailScreenState createState() => _MailDomainsDetailScreenState();
 }
 
-class _MailboxDomainDetailScreenState extends State<MailboxDomainDetailScreen> {
+class _MailDomainsDetailScreenState extends State<MailDomainsDetailScreen> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final double prefixWidth = 80;
