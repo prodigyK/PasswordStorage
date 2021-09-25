@@ -10,40 +10,43 @@ import 'package:provider/provider.dart';
 
 import '../app_data.dart';
 import '../widgets/category_item.dart';
-import '../screens/settings.dart';
 
 class CategoriesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Password Storage'),
-//        backgroundColor: Colors.white,
-        actions: [
-          IconButton(
-            icon: Icon(Icons.settings),
-            onPressed: () {
-              _showModalPopup(context);
-            },
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        if (constraints.maxWidth > 600) {
+          return _buildLayout(context, width: 600);
+        } else {
+          return _buildLayout(context, width: double.infinity);
+        }
+      },
+    );
+  }
+
+  Widget _buildLayout(BuildContext context, {double width}) {
+    return Container(
+      width: width,
+      margin: EdgeInsets.only(top: 16),
+      alignment: Alignment.topCenter,
+      child: ConstrainedBox(
+        constraints: BoxConstraints(maxWidth: width),
+        child: Scaffold(
+          backgroundColor: Colors.transparent,
+          body: SingleChildScrollView(
+            child: Column(
+              children: CATEGORIES
+                  .map((catData) => CategoryItem(
+                        id: catData.id,
+                        title: catData.title,
+                        route: catData.route,
+                        color: catData.color,
+                        icon: catData.icon,
+                      ))
+                  .toList(),
+            ),
           ),
-        ],
-      ),
-      body: GridView(
-        padding: const EdgeInsets.all(20),
-        children: CATEGORIES
-            .map((catData) => CategoryItem(
-                  id: catData.id,
-                  title: catData.title,
-                  route: catData.route,
-                  color: catData.color,
-                  icon: catData.icon,
-                ))
-            .toList(),
-        gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-          maxCrossAxisExtent: 200,
-          childAspectRatio: 3 / 2,
-          crossAxisSpacing: 15,
-          mainAxisSpacing: 15,
         ),
       ),
     );

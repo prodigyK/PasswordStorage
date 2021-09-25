@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:password_storage_app/models/user.dart';
 import 'package:password_storage_app/providers/user_repository.dart';
-import 'package:password_storage_app/screens/user_details_screen.dart';
+import 'package:password_storage_app/screens/users/user_details_screen.dart';
 import 'package:provider/provider.dart';
 
 class UserItem extends StatelessWidget {
@@ -61,11 +61,13 @@ class UserItem extends StatelessWidget {
       },
       child: ListTile(
         minVerticalPadding: 0,
+        minLeadingWidth: 50,
         isThreeLine: true,
         contentPadding: EdgeInsets.only(left: 16, right: 10),
         leading: Icon(
           Icons.account_circle,
-          size: 30,
+          size: 36,
+          // color: Colors.green.shade200,
         ),
         title: Text(
           users[index].name,

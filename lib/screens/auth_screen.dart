@@ -7,7 +7,7 @@ import 'package:provider/provider.dart';
 
 class AuthScreen extends StatelessWidget {
   Future<void> _login(BuildContext context) async {
-    await Future.delayed(Duration(seconds: 2));
+    await Future.delayed(Duration(seconds: 1));
     await Provider.of<Auth>(context, listen: false).signIn(
       secureData['firebaseLogin'],
       secureData['firebasePass'],
@@ -17,16 +17,13 @@ class AuthScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.blueGrey,
+      backgroundColor: Colors.transparent,
       body: FutureBuilder(
           future: _login(context),
           builder: (ctx, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return Center(
-                child: Text(
-                  'Trying to login...',
-                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20),
-                ),
+                child: CircularProgressIndicator(),
               );
             }
             return SplashScreen();
