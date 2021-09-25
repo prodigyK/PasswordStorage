@@ -42,7 +42,7 @@ class MailboxesMainScreen extends StatelessWidget {
                 categoryName: 'All Mailboxes',
                 iconData: Icons.email,
                 onPressed: () {
-                  Navigator.pushNamed(context, MailboxAllScreen.routeName);
+                  Navigator.pushNamed(context, MailboxAllScreen.routeName, arguments: {'domain': null});
                 },
               ),
               buildCategory(
