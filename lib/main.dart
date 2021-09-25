@@ -1,8 +1,8 @@
-// import 'package:firebase_core/firebase_core.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:page_transition/page_transition.dart';
+import 'package:password_storage_app/providers/encryption.dart';
 import 'package:password_storage_app/providers/mail_domain_repository.dart';
 import 'package:password_storage_app/providers/mail_service_repository.dart';
 import 'package:password_storage_app/providers/mailbox_repository.dart';
@@ -26,7 +26,6 @@ import 'screens/users/user_screen.dart';
 import 'providers/auth.dart';
 import 'providers/hosting_repository.dart';
 import 'providers/user_repository.dart';
-import 'package:flutter/services.dart' show rootBundle;
 import 'package:provider/provider.dart';
 
 var secureData = {};
@@ -34,7 +33,13 @@ var secureData = {};
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  secureData = await loadEnvironment();
 
+  runApp(MyApp());
+}
+
+Future<dynamic> loadEnvironment() async {
+  var secureData = {};
   final path = await rootBundle.loadString('.env');
   var fileData = path.split('\n');
   fileData.forEach((line) {
@@ -42,8 +47,7 @@ void main() async {
     final array = line.split('=');
     secureData.putIfAbsent(array[0], () => array[1]);
   });
-
-  runApp(MyApp());
+  return secureData;
 }
 
 class MyApp extends StatelessWidget {
@@ -69,6 +73,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (ctx) => MailServiceRepository()),
         ChangeNotifierProvider(create: (ctx) => MailDomainRepository()),
         ChangeNotifierProvider(create: (ctx) => MailboxRepository()),
+        ChangeNotifierProvider(create: (ctx) => Encryption(secureData)),
       ],
       child: Consumer<Auth>(
         builder: (ctx, auth, _) => MaterialApp(

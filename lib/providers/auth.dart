@@ -116,7 +116,7 @@ class Auth with ChangeNotifier {
     _expiryDate = expiryDate;
     notifyListeners();
     _autoLogout();
-    print(toString());
+    // print(toString());
   }
 
   @override
