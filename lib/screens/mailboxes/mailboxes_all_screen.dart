@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:password_storage_app/models/domain.dart';
 import 'package:password_storage_app/models/mailbox.dart';
+import 'package:password_storage_app/providers/encryption.dart';
 import 'package:password_storage_app/providers/mailbox_repository.dart';
 import 'package:password_storage_app/screens/mailboxes/mailbox_detail_screen.dart';
 import 'package:provider/provider.dart';
@@ -95,6 +96,8 @@ class _MailboxAllScreenState extends State<MailboxAllScreen> {
                 return ListView.builder(
                     itemCount: docs.length,
                     itemBuilder: (ctx, i) {
+                      final password =
+                          Provider.of<Encryption>(context, listen: false).decrypt(encoded: docs[i]['password']);
                       return GestureDetector(
                         key: ValueKey(docs[i].id),
                         child: Container(
@@ -112,7 +115,7 @@ class _MailboxAllScreenState extends State<MailboxAllScreen> {
                                 size: 30,
                               ),
                               title: Text(docs[i]['name'], style: TextStyle(fontWeight: FontWeight.bold)),
-                              subtitle: Text(docs[i]['password']),
+                              subtitle: Text(password),
                               trailing: Icon(
                                 Icons.arrow_forward_ios,
                                 size: 18,

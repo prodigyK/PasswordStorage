@@ -5,6 +5,7 @@ import 'package:password_storage_app/models/domain.dart';
 import 'package:password_storage_app/models/mailbox.dart';
 import 'package:password_storage_app/providers/mail_domain_repository.dart';
 import 'package:password_storage_app/providers/mailbox_repository.dart';
+import 'package:password_storage_app/providers/encryption.dart';
 import 'package:provider/provider.dart';
 
 class MailboxDetailScreen extends StatefulWidget {
@@ -51,7 +52,8 @@ class _MailboxDetailScreenState extends State<MailboxDetailScreen> {
         enabledSaveButton = true;
       }
       _nameController.text = isNew ? '' : mailbox.name.split('@')[0];
-      _passwordController.text = isNew ? '' : mailbox.password;
+      _passwordController.text =
+          isNew ? '' : Provider.of<Encryption>(context, listen: false).decrypt(encoded: mailbox.password);
 
       domains = await Provider.of<MailDomainRepository>(context, listen: false).getAllDocuments();
       setState(() {
@@ -79,10 +81,11 @@ class _MailboxDetailScreenState extends State<MailboxDetailScreen> {
     if (!_formKey.currentState.validate()) {
       return;
     }
+
     mailbox = Mailbox(
       id: isNew ? '' : mailbox.id,
       name: fullEmail,
-      password: _passwordController.text,
+      password: Provider.of<Encryption>(context, listen: false).encrypt(text: _passwordController.text),
       domainId: selectedDomain.id,
       modifiedAt: DateTime.now(),
     );
@@ -95,7 +98,8 @@ class _MailboxDetailScreenState extends State<MailboxDetailScreen> {
       }
       await _addMailbox();
     } else {
-      bool isExist = await Provider.of<MailboxRepository>(context, listen: false).contains(mailbox.name, docID: mailbox.id);
+      bool isExist =
+          await Provider.of<MailboxRepository>(context, listen: false).contains(mailbox.name, docID: mailbox.id);
       if (!isExist) {
         _showSnackbar('Cannot change existing mailbox', error: true);
         return;
@@ -172,12 +176,14 @@ class _MailboxDetailScreenState extends State<MailboxDetailScreen> {
                         height: 2,
                         color: Colors.transparent,
                       ),
-                      onChanged: isNew ? (Domain newValue) {
-                        setState(() {
-                          selectedDomain = newValue;
-                          fullEmail = _nameController.text + '@' + selectedDomain.name;
-                        });
-                      } : null,
+                      onChanged: isNew
+                          ? (Domain newValue) {
+                              setState(() {
+                                selectedDomain = newValue;
+                                fullEmail = _nameController.text + '@' + selectedDomain.name;
+                              });
+                            }
+                          : null,
                       items: domains.map<DropdownMenuItem<Domain>>((domain) {
                         return DropdownMenuItem<Domain>(
                           value: domain,
