@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fluttericon/font_awesome5_icons.dart';
 import 'package:password_storage_app/models/user.dart';
 import 'package:password_storage_app/providers/user_repository.dart';
 import 'package:provider/provider.dart';
@@ -122,7 +123,7 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
                       decoration: InputDecoration(
                         labelText: 'Username',
                         prefixIcon: GestureDetector(
-                          child: Icon(Icons.account_circle),
+                          child: Icon(FontAwesome5.user),
                           onTap: () {
                             Clipboard.setData(ClipboardData(text: "${_user.name}"));
                             _showSnackbar('Copied to Clipboard');

@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttericon/font_awesome5_icons.dart';
 import 'package:password_storage_app/models/user.dart';
 import 'package:password_storage_app/providers/user_repository.dart';
 import 'package:password_storage_app/screens/users/user_details_screen.dart';
@@ -48,7 +49,7 @@ class _UserScreenState extends State<UserScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.green.shade200,
-       title: Text('Users'),
+        title: Text('Users'),
         actions: [
           IconButton(
             icon: Icon(Icons.sort_by_alpha),
@@ -67,11 +68,12 @@ class _UserScreenState extends State<UserScreen> {
           ),
           SizedBox(width: 10),
           IconButton(
-            icon: Icon(Icons.add_box),
+            icon: Icon(FontAwesome5.user_plus),
             onPressed: () {
               Navigator.of(context).pushNamed(UserDetailScreen.routeName);
             },
           ),
+          SizedBox(width: 10),
         ],
       ),
       body: RefreshIndicator(
