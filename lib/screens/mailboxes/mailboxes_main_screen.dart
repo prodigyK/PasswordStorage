@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttericon/font_awesome5_icons.dart';
 import 'package:password_storage_app/screens/mailboxes/mailboxes_all_screen.dart';
 import 'package:password_storage_app/screens/mailboxes/mailboxes_by_domains_screen.dart';
 import 'package:password_storage_app/screens/mailboxes/mail_domains_screen.dart';
@@ -40,7 +41,7 @@ class MailboxesMainScreen extends StatelessWidget {
               buildCategory(
                 context,
                 categoryName: 'All Mailboxes',
-                iconData: Icons.email,
+                iconData: FontAwesome5.mail_bulk,
                 onPressed: () {
                   Navigator.pushNamed(context, MailboxAllScreen.routeName, arguments: {'domain': null});
                 },
@@ -48,7 +49,7 @@ class MailboxesMainScreen extends StatelessWidget {
               buildCategory(
                 context,
                 categoryName: 'Mailboxes by Domains',
-                iconData: Icons.view_week_sharp,
+                iconData: FontAwesome5.align_justify,
                 onPressed: () {
                   Navigator.pushNamed(context, MailboxesByDomainsScreen.routeName);
                 },
@@ -59,7 +60,7 @@ class MailboxesMainScreen extends StatelessWidget {
               buildCategory(
                 context,
                 categoryName: 'Domains',
-                iconData: Icons.domain,
+                iconData: FontAwesome5.globe_americas,
                 onPressed: () {
                   Navigator.pushNamed(context, MailDomainsScreen.routeName);
                 },

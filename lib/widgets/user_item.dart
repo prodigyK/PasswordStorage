@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttericon/font_awesome5_icons.dart';
 import 'package:password_storage_app/models/user.dart';
 import 'package:password_storage_app/providers/user_repository.dart';
 import 'package:password_storage_app/screens/users/user_details_screen.dart';
@@ -65,8 +66,8 @@ class UserItem extends StatelessWidget {
         isThreeLine: true,
         contentPadding: EdgeInsets.only(left: 16, right: 10),
         leading: Icon(
-          Icons.account_circle,
-          size: 36,
+          FontAwesome5.user,
+          size: 30,
           // color: Colors.green.shade200,
         ),
         title: Text(
