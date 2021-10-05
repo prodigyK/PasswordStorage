@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:password_storage_app/models/user.dart';
@@ -28,23 +26,26 @@ class CategoriesScreen extends StatelessWidget {
   Widget _buildLayout(BuildContext context, {double width}) {
     return Container(
       width: width,
-      margin: EdgeInsets.only(top: 16),
       alignment: Alignment.topCenter,
       child: ConstrainedBox(
         constraints: BoxConstraints(maxWidth: width),
         child: Scaffold(
-          backgroundColor: Colors.transparent,
-          body: SingleChildScrollView(
-            child: Column(
-              children: CATEGORIES
-                  .map((catData) => CategoryItem(
-                        id: catData.id,
-                        title: catData.title,
-                        route: catData.route,
-                        color: catData.color,
-                        icon: catData.icon,
-                      ))
-                  .toList(),
+          backgroundColor: Colors.white,
+
+          body: Center(
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: CATEGORIES
+                    .map((catData) => CategoryItem(
+                          id: catData.id,
+                          title: catData.title,
+                          route: catData.route,
+                          color: catData.color,
+                          icon: catData.icon,
+                        ))
+                    .toList(),
+              ),
             ),
           ),
         ),

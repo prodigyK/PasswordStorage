@@ -6,6 +6,7 @@ import 'package:password_storage_app/models/mailbox.dart';
 import 'package:password_storage_app/providers/encryption.dart';
 import 'package:password_storage_app/providers/mailbox_repository.dart';
 import 'package:password_storage_app/screens/mailboxes/mailbox_detail_screen.dart';
+import 'package:password_storage_app/widgets/mail_search_delegate.dart';
 import 'package:provider/provider.dart';
 
 class MailboxAllScreen extends StatefulWidget {
@@ -19,6 +20,8 @@ class _MailboxAllScreenState extends State<MailboxAllScreen> {
   var query;
   bool firstInit = true;
   String title = 'All Mailboxes';
+  final _searchController = TextEditingController();
+  String searchText = '';
 
   @override
   void didChangeDependencies() {
@@ -26,10 +29,7 @@ class _MailboxAllScreenState extends State<MailboxAllScreen> {
       final json = ModalRoute.of(context).settings.arguments as Map<String, dynamic>;
       Domain domain = json['domain'];
       if (domain == null) {
-        query = Provider.of<MailboxRepository>(context, listen: false).collection().where(
-              'domain_id',
-              isNotEqualTo: '',
-            );
+        query = Provider.of<MailboxRepository>(context, listen: false).collection();
       } else {
         title = domain.name;
         query = Provider.of<MailboxRepository>(context, listen: false).collection().where(
@@ -69,7 +69,9 @@ class _MailboxAllScreenState extends State<MailboxAllScreen> {
               actions: [
                 IconButton(
                   icon: Icon(Icons.search),
-                  onPressed: () {},
+                  onPressed: () {
+                    showSearch(context: context, delegate: MailSearchDelegate());
+                  },
                 ),
                 SizedBox(width: 20),
                 IconButton(
@@ -84,61 +86,106 @@ class _MailboxAllScreenState extends State<MailboxAllScreen> {
                 )
               ]),
           backgroundColor: Colors.white,
-          body: Container(
-            margin: EdgeInsets.only(top: 8.0),
-            child: StreamBuilder(
-              stream: query.snapshots(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(child: CircularProgressIndicator());
-                }
-                final docs = snapshot.data.docs;
-                return ListView.builder(
-                    itemCount: docs.length,
-                    itemBuilder: (ctx, i) {
-                      final password =
-                          Provider.of<Encryption>(context, listen: false).decrypt(encoded: docs[i]['password']);
-                      return GestureDetector(
-                        key: ValueKey(docs[i].id),
-                        child: Container(
-                          // color: Colors.black,
-                          margin: EdgeInsets.symmetric(horizontal: 8.0, vertical: 1.0),
-                          padding: EdgeInsets.symmetric(vertical: 2.0),
-                          child: Card(
-                            elevation: 3,
-                            margin: EdgeInsets.zero,
-                            color: Colors.grey.shade200,
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
-                            child: ListTile(
-                              leading: Icon(
-                                Icons.email,
-                                size: 30,
-                              ),
-                              title: Text(docs[i]['name'], style: TextStyle(fontWeight: FontWeight.bold)),
-                              subtitle: Text(password),
-                              trailing: Icon(
-                                Icons.arrow_forward_ios,
-                                size: 18,
-                              ),
-                            ),
-                          ),
-                        ),
-                        onTap: () {
-                          final docID = docs[i].id;
-                          Mailbox mailbox = Mailbox.fromJson(docs[i].data() as Map<String, dynamic>, docID: docID);
-                          Navigator.pushNamed(
-                            context,
-                            MailboxDetailScreen.routeName,
-                            arguments: {
-                              'isNew': false,
-                              'mailbox': mailbox,
-                            },
-                          );
-                        },
-                      );
+          body: Column(
+            children: [
+              Container(
+                height: 50,
+                margin: EdgeInsets.only(bottom: 0.0),
+                decoration: BoxDecoration(
+                  border: Border.all(width: 0.5, color: Colors.grey),
+                  borderRadius: BorderRadius.only(
+                    bottomLeft: Radius.circular(8.0),
+                    bottomRight: Radius.circular(8.0),
+                  ),
+                ),
+                child: CupertinoSearchTextField(
+                  controller: _searchController,
+                  backgroundColor: Colors.white,
+                  onChanged: (value) {
+                    searchText = value;
+                    setState(() {
+                      query = Provider.of<MailboxRepository>(context, listen: false)
+                          .collection()
+                          .where(
+                            'name',
+                            isGreaterThanOrEqualTo: searchText,
+                          )
+                          .where('name', isLessThanOrEqualTo: searchText + "\uf8ff");
                     });
-              },
-            ),
+                  },
+                  onSubmitted: (value) {},
+                  onSuffixTap: () {
+                    setState(() {
+                      _searchController.clear();
+                      searchText = '';
+                      setState(() {
+                        query = Provider.of<MailboxRepository>(context, listen: false).collection();
+                      });
+                    });
+                  },
+                ),
+              ),
+              // SizedBox(height: 5),
+              Expanded(
+                child: Container(
+                  margin: EdgeInsets.only(top: 0.0),
+                  child: StreamBuilder(
+                    stream: query.snapshots(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Center(child: CircularProgressIndicator());
+                      }
+                      final docs = snapshot.data.docs;
+                      return ListView.builder(
+                          itemCount: docs.length,
+                          itemBuilder: (ctx, i) {
+                            final password =
+                                Provider.of<Encryption>(context, listen: false).decrypt(encoded: docs[i]['password']);
+                            return GestureDetector(
+                              key: ValueKey(docs[i].id),
+                              child: Container(
+                                // color: Colors.black,
+                                margin: EdgeInsets.symmetric(horizontal: 8.0, vertical: 1.0),
+                                padding: EdgeInsets.symmetric(vertical: 2.0),
+                                child: Card(
+                                  elevation: 3,
+                                  margin: EdgeInsets.zero,
+                                  color: Colors.grey.shade100,
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+                                  child: ListTile(
+                                    leading: Icon(
+                                      Icons.email,
+                                      size: 30,
+                                    ),
+                                    title: Text(docs[i]['name'], style: TextStyle(fontWeight: FontWeight.bold)),
+                                    subtitle: Text(password),
+                                    trailing: Icon(
+                                      Icons.arrow_forward_ios,
+                                      size: 18,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              onTap: () {
+                                final docID = docs[i].id;
+                                Mailbox mailbox =
+                                    Mailbox.fromJson(docs[i].data() as Map<String, dynamic>, docID: docID);
+                                Navigator.pushNamed(
+                                  context,
+                                  MailboxDetailScreen.routeName,
+                                  arguments: {
+                                    'isNew': false,
+                                    'mailbox': mailbox,
+                                  },
+                                );
+                              },
+                            );
+                          });
+                    },
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ),

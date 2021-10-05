@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "889508940860",
+    "firebase_url": "https://password-storage-5908a-default-rtdb.firebaseio.com",
+    "project_id": "password-storage-5908a",
+    "storage_bucket": "password-storage-5908a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:889508940860:android:84d91c8ccd1e8903c58739",
+        "android_client_info": {
+          "package_name": "com.prodigy.password_storage_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "889508940860-ka6opm0fuk55i14tg5kbi797qdepakm8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBiia681o4iwYfjDFQdLbRzcy0jB1eQMzA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "889508940860-ka6opm0fuk55i14tg5kbi797qdepakm8.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "889508940860-bnibb784pb4un7q4uln2vbvaocobk9ih.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.prodigy.passwordStorageApp"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

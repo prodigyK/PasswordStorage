@@ -48,3 +48,4 @@ app.*.map.json
 /lib/app_data.dart
 /pubspec.lock
 /.gradle
+/node_modules/
