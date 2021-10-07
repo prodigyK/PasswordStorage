@@ -1,7 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:password_storage_app/models/hosting.dart';
-import 'package:password_storage_app/providers/hosting_repository.dart';
+import 'package:password_storage_app/providers/encryption.dart';
+import 'package:password_storage_app/providers/hosting_firestore_repository.dart';
 import 'package:provider/provider.dart';
 
 class HostingDetailsScreen extends StatefulWidget {
@@ -73,10 +74,11 @@ class _HostingDetailsScreenState extends State<HostingDetailsScreen> {
       _nameController.text = hosting.name;
       _urlController.text = hosting.hostingName;
       _hostingLoginController.text = hosting.hostingLogin;
-      _hostingPassController.text = hosting.hostingPass;
+      _hostingPassController.text =
+          Provider.of<Encryption>(context, listen: false).decrypt(encoded: hosting.hostingPass);
       _rdpIpController.text = hosting.rdpIp;
       _rdpLoginController.text = hosting.rdpLogin;
-      _rdpPassController.text = hosting.rdpPass;
+      _rdpPassController.text = Provider.of<Encryption>(context, listen: false).decrypt(encoded: hosting.rdpPass);
     }
 
     super.didChangeDependencies();
@@ -92,17 +94,46 @@ class _HostingDetailsScreenState extends State<HostingDetailsScreen> {
     hosting.name = _nameController.text;
     hosting.hostingName = _urlController.text;
     hosting.hostingLogin = _hostingLoginController.text;
-    hosting.hostingPass = _hostingPassController.text;
+    hosting.hostingPass = Provider.of<Encryption>(context, listen: false).encrypt(text: _hostingPassController.text);
     hosting.rdpIp = _rdpIpController.text;
     hosting.rdpLogin = _rdpLoginController.text;
-    hosting.rdpPass = _rdpPassController.text;
+    hosting.rdpPass = Provider.of<Encryption>(context, listen: false).encrypt(text: _rdpPassController.text);
 
     if (isNew) {
-      await Provider.of<HostingRepository>(context, listen: false).addHosting(hosting);
+      await _addHosting();
     } else {
-      await Provider.of<HostingRepository>(context, listen: false).updateHosting(hosting);
+      await _updateHosting();
     }
     Navigator.of(context).pop(true);
+  }
+
+  Future<void> _addHosting() async {
+    final provider = Provider.of<HostingFirestoreRepository>(context, listen: false);
+    bool result = await provider.addHosting(hosting).then((value) => true).catchError((error) => false);
+    result ? _showSnackbar('Hosting is Added') : _showSnackbar('Failed to Add Hosting', error: true);
+  }
+
+  Future<void> _updateHosting() async {
+    final provider = Provider.of<HostingFirestoreRepository>(context, listen: false);
+    bool result = await provider.updateHosting(hosting).then((value) => true).catchError((error) => false);
+    result ? _showSnackbar('Hosting is Updated') : _showSnackbar('Failed to Update Hosting', error: true);
+  }
+
+  Future<void> _removeHosting() async {
+    final provider = Provider.of<HostingFirestoreRepository>(context, listen: false);
+    await provider.removeHosting(hosting);
+    _showSnackbar('Hosting is removed', error: true);
+  }
+
+  void _showSnackbar(String message, {bool error = false}) {
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message, textAlign: TextAlign.center),
+        duration: Duration(seconds: 5),
+        backgroundColor: error ? Colors.red : Colors.black,
+      ),
+    );
   }
 
   @override
@@ -297,6 +328,49 @@ class _HostingDetailsScreenState extends State<HostingDetailsScreen> {
                               ),
                             ],
                           ),
+                          SizedBox(height: 24),
+                          if (!isNew)
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(24.0),
+                                    child: CupertinoButton(
+                                      color: Colors.red.shade200,
+                                      child: Text('Delete hosting \' ${hosting.name} \''),
+                                      onPressed: () async {
+                                        showDialog(
+                                          context: context,
+                                          builder: (ctx) => AlertDialog(
+                                            title: Text('Delete Hosting'),
+                                            content: Text('Do you want to remove hosting?'),
+                                            actions: [
+                                              TextButton(
+                                                child: Text('Yes'),
+                                                onPressed: () async {
+                                                  await _removeHosting();
+                                                  Navigator.of(context).pop(true);
+                                                },
+                                              ),
+                                              TextButton(
+                                                child: Text('No'),
+                                                onPressed: () {
+                                                  Navigator.of(context).pop(false);
+                                                },
+                                              ),
+                                            ],
+                                          ),
+                                        ).then((value) {
+                                          if (value) {
+                                            Navigator.of(context).pop();
+                                          }
+                                        });
+                                      },
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
                         ],
                       ),
                     ),

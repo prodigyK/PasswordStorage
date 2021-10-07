@@ -52,7 +52,7 @@ class HostingRepository with ChangeNotifier {
       {'auth': _token},
     );
     try {
-      final response = await http.post(url, body: json.encode(Hosting.toJson(hosting)));
+      final response = await http.post(url, body: json.encode(hosting.toJson()));
       if (response.statusCode >= 400) {
         throw HttpException('Error occured while adding new item Hosting');
       }
@@ -73,7 +73,7 @@ class HostingRepository with ChangeNotifier {
       {'auth': _token},
     );
     try {
-      final response = await http.patch(url, body: json.encode(Hosting.toJson(hosting)));
+      final response = await http.patch(url, body: json.encode(hosting.toJson()));
       if (response.statusCode >= 400) {
         throw HttpException('Error occured while updating item Hosting');
       }
@@ -95,7 +95,7 @@ class HostingRepository with ChangeNotifier {
       {'auth': _token},
     );
     try {
-      final response = await http.delete(url, body: json.encode(Hosting.toJson(hosting)));
+      final response = await http.delete(url, body: json.encode(hosting.toJson()));
       if (response.statusCode >= 400) {
         throw HttpException('Error occured while deleting item Hosting');
       }

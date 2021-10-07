@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:password_storage_app/providers/encryption.dart';
+import 'package:password_storage_app/providers/hosting_firestore_repository.dart';
 import 'package:password_storage_app/providers/mail_domain_repository.dart';
 import 'package:password_storage_app/providers/mail_service_repository.dart';
 import 'package:password_storage_app/providers/mailbox_repository.dart';
@@ -71,6 +72,7 @@ class MyApp extends StatelessWidget {
           ),
         ),
         ChangeNotifierProvider(create: (ctx) => UserFirestoreRepository()),
+        ChangeNotifierProvider(create: (ctx) => HostingFirestoreRepository()),
         ChangeNotifierProvider(create: (ctx) => MailServiceRepository()),
         ChangeNotifierProvider(create: (ctx) => MailDomainRepository()),
         ChangeNotifierProvider(create: (ctx) => MailboxRepository()),
