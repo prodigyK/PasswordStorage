@@ -1,7 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:password_storage_app/providers/hosting_repository.dart';
+import 'package:password_storage_app/providers/encryption.dart';
+import 'package:password_storage_app/providers/hosting_firestore_repository.dart';
 import 'package:password_storage_app/screens/hostings/hosting_detail_screen.dart';
 import 'package:provider/provider.dart';
 
@@ -41,22 +42,24 @@ class _HostingScreenState extends State<HostingScreen> {
               IconButton(
                 icon: Icon(Icons.add),
                 onPressed: () {
-                  Navigator.of(context).pushNamed(HostingDetailsScreen.routeName);
+                  Navigator.of(context).pushNamed(HostingDetailsScreen.routeName).then((value) async {
+                    setState(() {});
+                  });
                 },
               ),
             ],
           ),
           body: RefreshIndicator(
             onRefresh: () {
-              return Provider.of<HostingRepository>(context, listen: false).fetchAndSetHostings();
+              return Provider.of<HostingFirestoreRepository>(context, listen: false).getAllDocuments();
             },
             child: FutureBuilder(
-                future: Provider.of<HostingRepository>(context, listen: false).fetchAndSetHostings(),
+                future: Provider.of<HostingFirestoreRepository>(context, listen: false).getAllDocuments(),
                 builder: (ctx, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return Center(child: CircularProgressIndicator());
                   }
-                  var hostings = Provider.of<HostingRepository>(context, listen: false).hostings;
+                  var hostings = snapshot.data;
                   return Container(
                     margin: EdgeInsets.only(top: 10.0),
                     child: ListView.builder(
@@ -139,11 +142,19 @@ class _HostingScreenState extends State<HostingScreen> {
                                   SizedBox(height: 7),
                                   CartItem(text: hostings[i].hostingName, icon: Icons.http),
                                   CartItem(text: hostings[i].hostingLogin, icon: Icons.account_circle),
-                                  CartItem(text: hostings[i].hostingPass, icon: Icons.security),
+                                  CartItem(
+                                    text: Provider.of<Encryption>(context, listen: false)
+                                        .decrypt(encoded: hostings[i].hostingPass),
+                                    icon: Icons.security,
+                                  ),
                                   Divider(),
                                   CartItem(text: hostings[i].rdpIp, icon: Icons.place),
                                   CartItem(text: hostings[i].rdpLogin, icon: Icons.login),
-                                  CartItem(text: hostings[i].rdpPass, icon: Icons.security),
+                                  CartItem(
+                                    text: Provider.of<Encryption>(context, listen: false)
+                                        .decrypt(encoded: hostings[i].rdpPass),
+                                    icon: Icons.security,
+                                  ),
                                 ],
                               ),
                             ),
@@ -183,12 +194,18 @@ class CartItem extends StatelessWidget {
             onTap: () => _copyText(context, text),
           ),
           SizedBox(width: 13),
-          Text(text,
+          Expanded(
+            child: Text(
+              text,
               style: TextStyle(
                 fontSize: 18,
                 fontFamily: 'Lato',
                 fontWeight: FontWeight.bold,
-              )),
+              ),
+              softWrap: true,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
         ],
       ),
     );

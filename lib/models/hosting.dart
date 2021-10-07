@@ -23,20 +23,21 @@ class Hosting {
     this.rdpPass,
 });
 
-  static Map<String, String> toJson(Hosting hosting) {
+  Map<String, String> toJson() {
     return {
-      'name': hosting.name,
-      'hostingName': hosting.hostingName,
-      'hostingLogin': hosting.hostingLogin,
-      'hostingPass': hosting.hostingPass,
-      'rdpIp': hosting.rdpIp,
-      'rdpLogin': hosting.rdpLogin,
-      'rdpPass': hosting.rdpPass,
+      'name': this.name,
+      'hostingName': this.hostingName,
+      'hostingLogin': this.hostingLogin,
+      'hostingPass': this.hostingPass,
+      'rdpIp': this.rdpIp,
+      'rdpLogin': this.rdpLogin,
+      'rdpPass': this.rdpPass,
     };
   }
 
-  factory Hosting.fromJson(Map<String, dynamic> fromJson) {
+  factory Hosting.fromJson(Map<String, dynamic> fromJson, {String docID}) {
     return Hosting(
+      id: docID != null ? docID : fromJson['id'],
       name: fromJson['name'],
       hostingName: fromJson['hostingName'],
       hostingLogin: fromJson['hostingLogin'],
