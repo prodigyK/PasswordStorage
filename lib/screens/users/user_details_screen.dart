@@ -262,7 +262,8 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
                                 )),
                               ),
                               onPressed: () {
-                                Clipboard.setData(ClipboardData(text: "${_user.name} : ${_user.password}"));
+                                Clipboard.setData(
+                                    ClipboardData(text: "${_usernameController.text} : ${_passwordController.text}"));
                                 _showSnackbar('Copied to Clipboard');
                               },
                             ),
