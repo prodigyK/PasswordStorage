@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttericon/font_awesome5_icons.dart';
 import 'package:password_storage_app/models/user.dart';
-import 'package:password_storage_app/providers/user_repository.dart';
+import 'package:password_storage_app/providers/encryption.dart';
+import 'package:password_storage_app/providers/user_firestore_repository.dart';
 import 'package:provider/provider.dart';
+import 'package:intl/intl.dart';
 
 class UserDetailScreen extends StatefulWidget {
   static const routeName = '/user-detail-screen';
@@ -39,7 +41,8 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
         userId = _user.id;
       }
       _usernameController.text = _user.name;
-      _passwordController.text = _user.password;
+      _passwordController.text =
+          _isNew ? '' : Provider.of<Encryption>(context, listen: false).decrypt(encoded: _user.password);
       _descriptionController.text = _user.description;
     }
     firstInit = false;
@@ -66,22 +69,20 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
     setState(() {
       _isLoading = true;
     });
-    _user.dateTime = DateTime.now();
 
+    _user = User(
+      id: _isNew ? '' : userId,
+      name: _usernameController.text,
+      password: Provider.of<Encryption>(context, listen: false).encrypt(text: _passwordController.text),
+      description: _descriptionController.text,
+      dateTime: DateTime.now(),
+    );
+
+    print(_user);
     if (_isNew) {
-      await Provider.of<UserRepository>(context, listen: false)
-          .addUser(_user)
-          .then((value) => _showSnackbar('Successfully added'))
-          .catchError((error) {
-        _showSnackbar(error.toString());
-      });
+      await _addUser();
     } else {
-      await Provider.of<UserRepository>(context, listen: false)
-          .updateUser(_user)
-          .then((value) => _showSnackbar('Successfully updated'))
-          .catchError((error) {
-        _showSnackbar(error.toString());
-      });
+      await _updateUser();
     }
     setState(() {
       _isLoading = false;
@@ -90,12 +91,25 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
     Navigator.of(context).pop();
   }
 
-  void _showSnackbar(String message) {
+  Future<void> _addUser() async {
+    final provider = Provider.of<UserFirestoreRepository>(context, listen: false);
+    bool result = await provider.addUser(_user).then((value) => true).catchError((error) => false);
+    result ? _showSnackbar('User is Added') : _showSnackbar('Failed to Add User', error: true);
+  }
+
+  Future<void> _updateUser() async {
+    final provider = Provider.of<UserFirestoreRepository>(context, listen: false);
+    bool result = await provider.updateUser(_user).then((value) => true).catchError((error) => false);
+    result ? _showSnackbar('User is Updated') : _showSnackbar('Failed to Update User', error: true);
+  }
+
+  void _showSnackbar(String message, {bool error = false}) {
     ScaffoldMessenger.of(context).hideCurrentSnackBar();
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message, textAlign: TextAlign.center),
-        duration: Duration(seconds: 3),
+        duration: Duration(seconds: 5),
+        backgroundColor: error ? Colors.red : Colors.black,
       ),
     );
   }
@@ -141,14 +155,6 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
                       onFieldSubmitted: (_) {
                         FocusScope.of(context).requestFocus(_passwordFocus);
                       },
-                      onSaved: (value) {
-                        _user = User(
-                          id: userId,
-                          name: value,
-                          password: _user.password,
-                          dateTime: _user.dateTime,
-                        );
-                      },
                       validator: (value) {
                         if (value.isEmpty) {
                           return 'Please provide a username';
@@ -183,14 +189,6 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
                       onFieldSubmitted: (_) {
                         FocusScope.of(context).requestFocus(_descriptionFocus);
                       },
-                      onSaved: (value) {
-                        _user = User(
-                          id: userId,
-                          name: _user.name,
-                          password: value,
-                          dateTime: _user.dateTime,
-                        );
-                      },
                       validator: (value) {
                         if (value.isEmpty) {
                           return 'Please provide a password';
@@ -221,22 +219,22 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
                         ),
                       ),
                       style: TextStyle(),
-//                maxLength: 50,
                       onFieldSubmitted: (_) {},
-                      onSaved: (value) {
-                        _user = User(
-                          id: userId,
-                          name: _user.name,
-                          password: _user.password,
-                          description: value,
-                          dateTime: _user.dateTime,
-                        );
-                      },
                       validator: (value) {
                         return null;
                       },
                     ),
-                    SizedBox(height: 10),
+                    SizedBox(height: 16),
+                    Row(
+                      children: [
+                        Text(
+                          'Modified Date: ',
+                          // style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        Text('${DateFormat('dd-MM-yyyy').format(_user.dateTime)}'),
+                      ],
+                    ),
+                    SizedBox(height: 16),
                     Row(
                       children: [
                         Expanded(

@@ -11,6 +11,7 @@ class ServersScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text('Servers'),
       ),
+      body: Center(child: Text('Under construction...', style: TextStyle(fontSize: 24))),
     );
   }
 }

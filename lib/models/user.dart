@@ -15,9 +15,9 @@ class User {
     this.dateTime,
   });
 
-  factory User.fromJson(Map<String, dynamic> fromJson) {
+  factory User.fromJson(Map<String, dynamic> fromJson, {String docID}) {
     return User(
-      id: fromJson['id'],
+      id: docID != null ? docID : fromJson['id'],
       name: fromJson['name'],
       password: fromJson['password'],
       description: fromJson['description'],
@@ -25,12 +25,12 @@ class User {
     );
   }
 
-  static Map<String, String> toJson(User user) {
+  Map<String, String> toJson() {
     return {
-      'name': user.name,
-      'password': user.password,
-      'description': user.description,
-      'dateTime': user.dateTime.toIso8601String(),
+      'name': this.name,
+      'password': this.password,
+      'description': this.description,
+      'dateTime': this.dateTime.toIso8601String(),
     };
   }
 

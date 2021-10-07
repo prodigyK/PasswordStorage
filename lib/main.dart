@@ -6,6 +6,7 @@ import 'package:password_storage_app/providers/encryption.dart';
 import 'package:password_storage_app/providers/mail_domain_repository.dart';
 import 'package:password_storage_app/providers/mail_service_repository.dart';
 import 'package:password_storage_app/providers/mailbox_repository.dart';
+import 'package:password_storage_app/providers/user_firestore_repository.dart';
 import 'package:password_storage_app/screens/auth/auth_screen.dart';
 import 'package:password_storage_app/screens/mailboxes/mailboxes_all_screen.dart';
 import 'package:password_storage_app/screens/mailboxes/mailboxes_by_domains_screen.dart';
@@ -69,6 +70,7 @@ class MyApp extends StatelessWidget {
             auth.userId,
           ),
         ),
+        ChangeNotifierProvider(create: (ctx) => UserFirestoreRepository()),
         ChangeNotifierProvider(create: (ctx) => MailServiceRepository()),
         ChangeNotifierProvider(create: (ctx) => MailDomainRepository()),
         ChangeNotifierProvider(create: (ctx) => MailboxRepository()),
