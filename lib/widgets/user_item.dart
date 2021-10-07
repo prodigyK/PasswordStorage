@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:fluttericon/font_awesome5_icons.dart';
 import 'package:password_storage_app/models/user.dart';
-import 'package:password_storage_app/providers/user_repository.dart';
+import 'package:password_storage_app/providers/encryption.dart';
+import 'package:password_storage_app/providers/user_firestore_repository.dart';
 import 'package:password_storage_app/screens/users/user_details_screen.dart';
 import 'package:provider/provider.dart';
 
@@ -10,10 +11,12 @@ class UserItem extends StatelessWidget {
     Key key,
     @required this.users,
     @required this.index,
+    @required this.update,
   }) : super(key: key);
 
   final List<User> users;
   final int index;
+  final Function update;
 
   @override
   Widget build(BuildContext context) {
@@ -57,8 +60,10 @@ class UserItem extends StatelessWidget {
           ),
         );
       },
-      onDismissed: (direction) {
-        Provider.of<UserRepository>(context, listen: false).removeUser(users[index]);
+      onDismissed: (direction) async {
+        await Provider.of<UserFirestoreRepository>(context, listen: false).removeUser(users[index]);
+        users.removeAt(index);
+        update();
       },
       child: ListTile(
         minVerticalPadding: 0,
@@ -74,7 +79,9 @@ class UserItem extends StatelessWidget {
           users[index].name,
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
-        subtitle: Text(users[index].password),
+        subtitle: Text(
+          Provider.of<Encryption>(context, listen: false).decrypt(encoded: users[index].password),
+        ),
         trailing: Container(
           padding: EdgeInsets.only(top: 7),
           child: Icon(
@@ -86,7 +93,7 @@ class UserItem extends StatelessWidget {
           Navigator.of(context).pushNamed(
             UserDetailScreen.routeName,
             arguments: {'user': users[index]},
-          );
+          ).then((value) => update());
         },
       ),
     );

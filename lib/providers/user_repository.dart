@@ -62,7 +62,7 @@ class UserRepository with ChangeNotifier {
     );
     final response = await http.post(
       url,
-      body: json.encode(User.toJson(user)),
+      body: json.encode(user.toJson()),
     );
     if (response.statusCode >= 400) {
       print(response.statusCode);
@@ -83,7 +83,7 @@ class UserRepository with ChangeNotifier {
     );
     final response = await http.patch(
       url,
-      body: json.encode(User.toJson(user)),
+      body: json.encode(user.toJson()),
     );
     if (response.statusCode >= 400) {
       throw HttpException('Cannot update item in remote database');
@@ -105,7 +105,7 @@ class UserRepository with ChangeNotifier {
     );
     final response = await http.delete(
       url,
-      body: json.encode(User.toJson(user)),
+      body: json.encode(user.toJson()),
     );
     final index = _users.indexWhere((user) => user.id == id);
     _users.removeAt(index);

@@ -146,18 +146,24 @@ class _MailboxAllScreenState extends State<MailboxAllScreen> {
                               child: Container(
                                 // color: Colors.black,
                                 margin: EdgeInsets.symmetric(horizontal: 8.0, vertical: 1.0),
-                                padding: EdgeInsets.symmetric(vertical: 2.0),
+                                padding: EdgeInsets.symmetric(vertical: 1.0),
                                 child: Card(
-                                  elevation: 3,
+                                  elevation: 1,
                                   margin: EdgeInsets.zero,
-                                  color: Colors.grey.shade100,
-                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+                                  color: Colors.grey    .shade50,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8.0),
+                                    side: BorderSide(width: 0.2),
+                                  ),
                                   child: ListTile(
                                     leading: Icon(
                                       Icons.email,
                                       size: 30,
                                     ),
-                                    title: Text(docs[i]['name'], style: TextStyle(fontWeight: FontWeight.bold)),
+                                    title: Text(
+                                      docs[i]['name'],
+                                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                                    ),
                                     subtitle: Text(password),
                                     trailing: Icon(
                                       Icons.arrow_forward_ios,
