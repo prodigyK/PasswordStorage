@@ -31,7 +31,7 @@ class MailServiceRepository with ChangeNotifier {
     List<Service> services = [];
     final querySnapshot = await collection().get();
     querySnapshot.docs.forEach((doc) {
-      services.add(Service.fromJson(doc.data(), docID: doc.id));
+      services.add(Service.fromJson(doc.data() as Map<String, dynamic>, docID: doc.id));
     });
     return services;
   }

@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
@@ -17,7 +18,7 @@ class MailboxAllScreen extends StatefulWidget {
 }
 
 class _MailboxAllScreenState extends State<MailboxAllScreen> {
-  var query;
+  late var query;
   bool firstInit = true;
   String title = 'All Mailboxes';
   final _searchController = TextEditingController();
@@ -26,8 +27,8 @@ class _MailboxAllScreenState extends State<MailboxAllScreen> {
   @override
   void didChangeDependencies() {
     if (firstInit) {
-      final json = ModalRoute.of(context).settings.arguments as Map<String, dynamic>;
-      Domain domain = json['domain'];
+      final json = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+      Domain? domain = json['domain'];
       if (domain == null) {
         query = Provider.of<MailboxRepository>(context, listen: false).collection();
       } else {
@@ -56,7 +57,7 @@ class _MailboxAllScreenState extends State<MailboxAllScreen> {
     );
   }
 
-  Widget _buildScaffold(BuildContext context, {double width}) {
+  Widget _buildScaffold(BuildContext context, {required double width}) {
     return Container(
       width: width,
       alignment: Alignment.topCenter,
@@ -131,11 +132,11 @@ class _MailboxAllScreenState extends State<MailboxAllScreen> {
                   margin: EdgeInsets.only(top: 0.0),
                   child: StreamBuilder(
                     stream: query.snapshots(),
-                    builder: (context, snapshot) {
+                    builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return Center(child: CircularProgressIndicator());
                       }
-                      final docs = snapshot.data.docs;
+                      final docs = snapshot.data!.docs;
                       return ListView.builder(
                           itemCount: docs.length,
                           itemBuilder: (ctx, i) {

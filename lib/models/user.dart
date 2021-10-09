@@ -3,19 +3,19 @@ import 'package:flutter/foundation.dart';
 class User {
   String id;
   final String name;
-  final String password;
+  final String? password;
   final String description;
   DateTime dateTime = DateTime.now();
 
   User({
-    this.id,
-    @required this.name,
-    @required this.password,
-    this.description,
-    this.dateTime,
+    required this.id,
+    required this.name,
+    required this.password,
+    required this.description,
+    required this.dateTime,
   });
 
-  factory User.fromJson(Map<String, dynamic> fromJson, {String docID}) {
+  factory User.fromJson(Map<String, dynamic> fromJson, {String? docID}) {
     return User(
       id: docID != null ? docID : fromJson['id'],
       name: fromJson['name'],
@@ -25,7 +25,7 @@ class User {
     );
   }
 
-  Map<String, String> toJson() {
+  Map<String, String?> toJson() {
     return {
       'name': this.name,
       'password': this.password,

@@ -12,15 +12,28 @@ class Hosting {
   String rdpLogin;
   String rdpPass;
 
+  factory Hosting.empty() {
+    return Hosting(
+      id: '',
+      name: '',
+      hostingName: '',
+      hostingLogin: '',
+      hostingPass: '',
+      rdpIp: '',
+      rdpLogin: '',
+      rdpPass: '',
+    );
+  }
+
   Hosting({
-    this.id,
-    this.name,
-    this.hostingName,
-    this.hostingLogin,
-    this.hostingPass,
-    this.rdpIp,
-    this.rdpLogin,
-    this.rdpPass,
+    required this.id,
+    required this.name,
+    required this.hostingName,
+    required this.hostingLogin,
+    required this.hostingPass,
+    required this.rdpIp,
+    required this.rdpLogin,
+    required this.rdpPass,
 });
 
   Map<String, String> toJson() {
@@ -35,7 +48,7 @@ class Hosting {
     };
   }
 
-  factory Hosting.fromJson(Map<String, dynamic> fromJson, {String docID}) {
+  factory Hosting.fromJson(Map<String, dynamic> fromJson, {String? docID}) {
     return Hosting(
       id: docID != null ? docID : fromJson['id'],
       name: fromJson['name'],

@@ -6,14 +6,14 @@ class Mailbox {
   final DateTime modifiedAt;
 
   Mailbox({
-    this.id,
-    this.name,
-    this.password,
-    this.domainId,
-    this.modifiedAt,
+    required this.id,
+    required this.name,
+    required this.password,
+    required this.domainId,
+    required this.modifiedAt,
   });
 
-  factory Mailbox.fromJson(Map<String, dynamic> json, {String docID}) {
+  factory Mailbox.fromJson(Map<String, dynamic> json, {String? docID}) {
     return Mailbox(
       id: docID != null ? docID : json['id'],
       name: json['name'],

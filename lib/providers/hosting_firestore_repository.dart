@@ -34,7 +34,7 @@ class HostingFirestoreRepository with ChangeNotifier {
     final querySnapshot = await collection().get();
     querySnapshot.docs.forEach((hosting) {
       hostings.add(
-        Hosting.fromJson(hosting.data(), docID: hosting.id),
+        Hosting.fromJson(hosting.data() as Map<String, dynamic>, docID: hosting.id),
       );
     });
     _hostings = hostings;

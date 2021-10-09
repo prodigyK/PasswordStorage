@@ -8,11 +8,11 @@ class CategoryItem extends StatelessWidget {
   final IconData icon;
 
   CategoryItem({
-    @required this.id,
-    @required this.title,
-    @required this.route,
+    required this.id,
+    required this.title,
+    required this.route,
     this.color = Colors.orange,
-    @required this.icon,
+    required this.icon,
   });
 
   void _selectCategory(BuildContext context) {

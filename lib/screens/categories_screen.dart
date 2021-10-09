@@ -23,7 +23,7 @@ class CategoriesScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildLayout(BuildContext context, {double width}) {
+  Widget _buildLayout(BuildContext context, {required double width}) {
     return Container(
       width: width,
       alignment: Alignment.topCenter,

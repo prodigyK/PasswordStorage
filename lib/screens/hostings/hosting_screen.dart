@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:password_storage_app/models/hosting.dart';
 import 'package:password_storage_app/providers/encryption.dart';
 import 'package:password_storage_app/providers/hosting_firestore_repository.dart';
 import 'package:password_storage_app/screens/hostings/hosting_detail_screen.dart';
@@ -27,7 +28,7 @@ class _HostingScreenState extends State<HostingScreen> {
     );
   }
 
-  Widget _buildScaffold(BuildContext context, {double width}) {
+  Widget _buildScaffold(BuildContext context, {required double width}) {
     return Container(
       width: width,
       alignment: Alignment.topCenter,
@@ -59,7 +60,7 @@ class _HostingScreenState extends State<HostingScreen> {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return Center(child: CircularProgressIndicator());
                   }
-                  var hostings = snapshot.data;
+                  var hostings = snapshot.data as List<Hosting>;
                   return Container(
                     margin: EdgeInsets.only(top: 10.0),
                     child: ListView.builder(
@@ -171,9 +172,9 @@ class _HostingScreenState extends State<HostingScreen> {
 
 class CartItem extends StatelessWidget {
   const CartItem({
-    Key key,
-    @required this.text,
-    @required this.icon,
+    Key? key,
+    required this.text,
+    required this.icon,
   }) : super(key: key);
 
   final String text;

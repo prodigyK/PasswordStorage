@@ -11,30 +11,30 @@ class Service {
   final DateTime modifiedAt;
 
   Service({
-    this.id,
-    @required this.name,
-    this.deliveryAddress,
-    this.deliveryPort,
-    this.sendAddress,
-    this.sendPort,
-    this.ssl,
-    this.modifiedAt,
+    required this.id,
+    required this.name,
+    required this.deliveryAddress,
+    required this.deliveryPort,
+    required this.sendAddress,
+    required this.sendPort,
+    required this.ssl,
+    required this.modifiedAt,
   });
 
   factory Service.empty() {
     return Service(
-      id: null,
-      name: null,
-      deliveryAddress: null,
-      deliveryPort: null,
-      sendAddress: null,
-      sendPort: null,
-      ssl: null,
+      id: '',
+      name: '',
+      deliveryAddress: '',
+      deliveryPort: '',
+      sendAddress: '',
+      sendPort: '',
+      ssl: false,
       modifiedAt: DateTime.now(),
     );
   }
 
-  factory Service.fromJson(Map<String, dynamic> json, {String docID}) {
+  factory Service.fromJson(Map<String, dynamic> json, {String? docID}) {
     return Service(
       id: docID != null ? docID : json['id'],
       name: json['name'],

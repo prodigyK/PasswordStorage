@@ -5,13 +5,13 @@ class Domain {
   final DateTime modifiedAt;
 
   Domain({
-    this.id,
-    this.name,
-    this.serviceId,
-    this.modifiedAt,
+    required this.id,
+    required this.name,
+    required this.serviceId,
+    required this.modifiedAt,
   });
 
-  factory Domain.fromJson(Map<String, dynamic> json, {String docID}) {
+  factory Domain.fromJson(Map<String, dynamic> json, {String? docID}) {
     return Domain(
       id: docID != null ? docID : json['id'],
       name: json['name'],

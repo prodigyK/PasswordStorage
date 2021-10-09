@@ -8,20 +8,20 @@ import 'package:provider/provider.dart';
 
 class UserItem extends StatelessWidget {
   const UserItem({
-    Key key,
-    @required this.users,
-    @required this.index,
-    @required this.update,
+    Key? key,
+    required this.users,
+    required this.index,
+    required this.update,
   }) : super(key: key);
 
-  final List<User> users;
+  final List<User>? users;
   final int index;
   final Function update;
 
   @override
   Widget build(BuildContext context) {
     return Dismissible(
-      key: ValueKey(users[index].id),
+      key: ValueKey(users![index].id),
       background: Container(
         color: Theme.of(context).errorColor,
         child: Icon(
@@ -61,8 +61,8 @@ class UserItem extends StatelessWidget {
         );
       },
       onDismissed: (direction) async {
-        await Provider.of<UserFirestoreRepository>(context, listen: false).removeUser(users[index]);
-        users.removeAt(index);
+        await Provider.of<UserFirestoreRepository>(context, listen: false).removeUser(users![index]);
+        users!.removeAt(index);
         update();
       },
       child: ListTile(
@@ -76,11 +76,11 @@ class UserItem extends StatelessWidget {
           // color: Colors.green.shade200,
         ),
         title: Text(
-          users[index].name,
+          users![index].name,
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         subtitle: Text(
-          Provider.of<Encryption>(context, listen: false).decrypt(encoded: users[index].password),
+          Provider.of<Encryption>(context, listen: false).decrypt(encoded: users![index].password!),
         ),
         trailing: Container(
           padding: EdgeInsets.only(top: 7),
@@ -92,7 +92,7 @@ class UserItem extends StatelessWidget {
         onTap: () {
           Navigator.of(context).pushNamed(
             UserDetailScreen.routeName,
-            arguments: {'user': users[index]},
+            arguments: {'user': users![index]},
           ).then((value) => update());
         },
       ),

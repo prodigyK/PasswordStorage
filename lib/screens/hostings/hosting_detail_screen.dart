@@ -15,8 +15,8 @@ class HostingDetailsScreen extends StatefulWidget {
 class _HostingDetailsScreenState extends State<HostingDetailsScreen> {
   bool isNew = false;
   bool firstInit = true;
-  Hosting hosting;
-  String hostingId;
+  late Hosting hosting;
+  late String hostingId;
   bool isSaving = false;
 
   final _formKey = GlobalKey<FormState>();
@@ -63,10 +63,10 @@ class _HostingDetailsScreenState extends State<HostingDetailsScreen> {
   @override
   void didChangeDependencies() {
     if (firstInit) {
-      final settings = ModalRoute.of(context).settings.arguments as Map<String, Object>;
-      hosting = settings != null ? settings['hosting'] as Hosting : Hosting();
-      hostingId = hosting.id != null ? hosting.id : null;
-      isNew = hosting.id == null;
+      final settings = ModalRoute.of(context)!.settings.arguments as Map<String, Object>?;
+      hosting = settings != null ? settings['hosting'] as Hosting : Hosting.empty();
+      hostingId = hosting.id.isNotEmpty ? hosting.id : '';
+      isNew = hosting.id.isEmpty;
       firstInit = false;
     }
 
@@ -85,12 +85,12 @@ class _HostingDetailsScreenState extends State<HostingDetailsScreen> {
   }
 
   void _saveForm() async {
-    if (!_formKey.currentState.validate()) {
+    if (!_formKey.currentState!.validate()) {
       return;
     }
-    _formKey.currentState.save();
+    _formKey.currentState!.save();
 
-    hosting.id = isNew ? null : hostingId;
+    hosting.id = isNew ? '' : hostingId;
     hosting.name = _nameController.text;
     hosting.hostingName = _urlController.text;
     hosting.hostingLogin = _hostingLoginController.text;
@@ -151,7 +151,7 @@ class _HostingDetailsScreenState extends State<HostingDetailsScreen> {
     );
   }
 
-  Widget _buildScaffold(double prefixWidth, BuildContext context, {double width}) {
+  Widget _buildScaffold(double prefixWidth, BuildContext context, {required double width}) {
     return Container(
       width: width,
       alignment: Alignment.topCenter,
@@ -193,7 +193,7 @@ class _HostingDetailsScreenState extends State<HostingDetailsScreen> {
                                   FocusScope.of(context).requestFocus(_urlFocusNode);
                                 },
                                 validator: (value) {
-                                  if (value.isEmpty) {
+                                  if (value!.isEmpty) {
                                     return 'Enter correct name';
                                   }
                                   return null;
@@ -218,7 +218,7 @@ class _HostingDetailsScreenState extends State<HostingDetailsScreen> {
                                   FocusScope.of(context).requestFocus(_hostingLoginFocus);
                                 },
                                 validator: (value) {
-                                  if (value.isEmpty) {
+                                  if (value!.isEmpty) {
                                     return 'Enter a hosting';
                                   }
                                   return null;
@@ -238,7 +238,7 @@ class _HostingDetailsScreenState extends State<HostingDetailsScreen> {
                                   FocusScope.of(context).requestFocus(_hostingPassFocus);
                                 },
                                 validator: (value) {
-                                  if (value.isEmpty) {
+                                  if (value!.isEmpty) {
                                     return 'Enter a login';
                                   }
                                   return null;
@@ -258,7 +258,7 @@ class _HostingDetailsScreenState extends State<HostingDetailsScreen> {
                                   FocusScope.of(context).requestFocus(_rdpIpFocus);
                                 },
                                 validator: (value) {
-                                  if (value.isEmpty) {
+                                  if (value!.isEmpty) {
                                     return 'Enter a password';
                                   }
                                   return null;
@@ -283,7 +283,7 @@ class _HostingDetailsScreenState extends State<HostingDetailsScreen> {
                                   FocusScope.of(context).requestFocus(_rdpLoginFocus);
                                 },
                                 validator: (value) {
-                                  if (value.isEmpty) {
+                                  if (value!.isEmpty) {
                                     return 'Enter Ip address';
                                   }
                                   return null;
@@ -303,7 +303,7 @@ class _HostingDetailsScreenState extends State<HostingDetailsScreen> {
                                   FocusScope.of(context).requestFocus(_rdpPassFocus);
                                 },
                                 validator: (value) {
-                                  if (value.isEmpty) {
+                                  if (value!.isEmpty) {
                                     return 'Enter rdp login';
                                   }
                                   return null;
@@ -320,7 +320,7 @@ class _HostingDetailsScreenState extends State<HostingDetailsScreen> {
                                 keyboardType: TextInputType.text,
                                 textInputAction: TextInputAction.done,
                                 validator: (value) {
-                                  if (value.isEmpty) {
+                                  if (value!.isEmpty) {
                                     return 'Enter rdp password';
                                   }
                                   return null;

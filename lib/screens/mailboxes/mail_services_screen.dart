@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:password_storage_app/models/service.dart';
 import 'package:password_storage_app/providers/mail_service_repository.dart';
@@ -20,7 +21,7 @@ class MailServicesScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildScaffold(BuildContext context, {double width}) {
+  Widget _buildScaffold(BuildContext context, {double? width}) {
     return Container(
       width: width,
       child: Scaffold(
@@ -41,11 +42,11 @@ class MailServicesScreen extends StatelessWidget {
           margin: EdgeInsets.only(top: 8.0),
           child: StreamBuilder(
               stream: Provider.of<MailServiceRepository>(context, listen: false).snapshots(),
-              builder: (context, snapshot) {
+              builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return Center(child: CircularProgressIndicator());
                 }
-                final docs = snapshot.data.docs;
+                final docs = snapshot.data!.docs;
                 return ListView.builder(
                     itemCount: docs.length,
                     itemBuilder: (ctx, i) {
@@ -60,9 +61,9 @@ class MailServicesScreen extends StatelessWidget {
 
 class ServiceItem extends StatelessWidget {
   const ServiceItem({
-    Key key,
-    @required this.docs,
-    @required this.index,
+    Key? key,
+    required this.docs,
+    required this.index,
   }) : super(key: key);
 
   final docs;

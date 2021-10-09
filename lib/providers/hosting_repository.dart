@@ -7,8 +7,8 @@ import 'package:password_storage_app/models/http_exception.dart';
 import '../main.dart';
 
 class HostingRepository with ChangeNotifier {
-  final String _token;
-  final String _userId;
+  final String? _token;
+  final String? _userId;
   List<Hosting> _hostings = [];
 
   HostingRepository(this._token, this._userId);

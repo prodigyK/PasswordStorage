@@ -19,13 +19,13 @@ class _MailboxDetailScreenState extends State<MailboxDetailScreen> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _passwordController = TextEditingController();
-  Domain selectedDomain;
+  Domain? selectedDomain;
   bool firstInit = true;
   List<Domain> domains = [];
   String fullEmail = '';
   bool enabledSaveButton = false;
-  Mailbox mailbox;
-  bool isNew = true;
+  Mailbox? mailbox;
+  bool? isNew = true;
 
   @override
   void dispose() {
@@ -37,9 +37,9 @@ class _MailboxDetailScreenState extends State<MailboxDetailScreen> {
   @override
   void didChangeDependencies() async {
     if (firstInit) {
-      final ref = ModalRoute.of(context).settings.arguments as Map<String, dynamic>;
+      final ref = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
       isNew = ref['isNew'];
-      if (isNew) {
+      if (isNew!) {
         mailbox = Mailbox(
           id: '',
           name: '',
@@ -51,14 +51,14 @@ class _MailboxDetailScreenState extends State<MailboxDetailScreen> {
         mailbox = ref['mailbox'];
         enabledSaveButton = true;
       }
-      _nameController.text = isNew ? '' : mailbox.name.split('@')[0];
+      _nameController.text = isNew! ? '' : mailbox!.name.split('@')[0];
       _passwordController.text =
-          isNew ? '' : Provider.of<Encryption>(context, listen: false).decrypt(encoded: mailbox.password);
+          isNew! ? '' : Provider.of<Encryption>(context, listen: false).decrypt(encoded: mailbox!.password);
 
       domains = await Provider.of<MailDomainRepository>(context, listen: false).getAllDocuments();
       setState(() {
-        selectedDomain = isNew ? domains.first : domains.firstWhere((domain) => domain.id == mailbox.domainId);
-        fullEmail = isNew ? '@${selectedDomain.name}' : mailbox.name;
+        selectedDomain = isNew! ? domains.first : domains.firstWhere((domain) => domain.id == mailbox!.domainId);
+        fullEmail = isNew! ? '@${selectedDomain!.name}' : mailbox!.name;
       });
     }
     firstInit = false;
@@ -78,20 +78,20 @@ class _MailboxDetailScreenState extends State<MailboxDetailScreen> {
   }
 
   void _saveForm() async {
-    if (!_formKey.currentState.validate()) {
+    if (!_formKey.currentState!.validate()) {
       return;
     }
 
     mailbox = Mailbox(
-      id: isNew ? '' : mailbox.id,
+      id: isNew! ? '' : mailbox!.id,
       name: fullEmail,
       password: Provider.of<Encryption>(context, listen: false).encrypt(text: _passwordController.text),
-      domainId: selectedDomain.id,
+      domainId: selectedDomain!.id,
       modifiedAt: DateTime.now(),
     );
 
-    if (isNew) {
-      bool isExist = await Provider.of<MailboxRepository>(context, listen: false).contains(mailbox.name);
+    if (isNew!) {
+      bool isExist = await Provider.of<MailboxRepository>(context, listen: false).contains(mailbox!.name);
       if (isExist) {
         _showSnackbar('Mailbox already exists', error: true);
         return;
@@ -99,7 +99,7 @@ class _MailboxDetailScreenState extends State<MailboxDetailScreen> {
       await _addMailbox();
     } else {
       bool isExist =
-          await Provider.of<MailboxRepository>(context, listen: false).contains(mailbox.name, docID: mailbox.id);
+          await Provider.of<MailboxRepository>(context, listen: false).contains(mailbox!.name, docID: mailbox!.id);
       if (!isExist) {
         _showSnackbar('Cannot change existing mailbox', error: true);
         return;
@@ -112,13 +112,13 @@ class _MailboxDetailScreenState extends State<MailboxDetailScreen> {
 
   Future<void> _addMailbox() async {
     final provider = Provider.of<MailboxRepository>(context, listen: false);
-    bool result = await provider.addMailbox(mailbox).then((value) => true).catchError((error) => false);
+    bool result = await provider.addMailbox(mailbox!).then((value) => true).catchError((error) => false);
     result ? _showSnackbar('Mailbox is Added') : _showSnackbar('Failed to Add Mailbox', error: true);
   }
 
   Future<void> _updateMailbox() async {
     final provider = Provider.of<MailboxRepository>(context, listen: false);
-    bool result = await provider.updateMailbox(mailbox).then((value) => true).catchError((error) => false);
+    bool result = await provider.updateMailbox(mailbox!).then((value) => true).catchError((error) => false);
     result ? _showSnackbar('Mailbox is Updated') : _showSnackbar('Failed to Update Mailbox', error: true);
   }
 
@@ -135,12 +135,12 @@ class _MailboxDetailScreenState extends State<MailboxDetailScreen> {
     );
   }
 
-  Widget _buildScaffold(BuildContext context, {double width}) {
+  Widget _buildScaffold(BuildContext context, {double? width}) {
     return Container(
       width: width,
       child: Scaffold(
         appBar: AppBar(
-          title: isNew ? Text('Add Mailbox') : Text('Modify Mailbox'),
+          title: isNew! ? Text('Add Mailbox') : Text('Modify Mailbox'),
           backgroundColor: Colors.blue.shade200,
         ),
         backgroundColor: Colors.white,
@@ -176,11 +176,11 @@ class _MailboxDetailScreenState extends State<MailboxDetailScreen> {
                         height: 2,
                         color: Colors.transparent,
                       ),
-                      onChanged: isNew
-                          ? (Domain newValue) {
+                      onChanged: isNew!
+                          ? (Domain? newValue) {
                               setState(() {
                                 selectedDomain = newValue;
-                                fullEmail = _nameController.text + '@' + selectedDomain.name;
+                                fullEmail = _nameController.text + '@' + selectedDomain!.name;
                               });
                             }
                           : null,
@@ -220,7 +220,7 @@ class _MailboxDetailScreenState extends State<MailboxDetailScreen> {
                     maxLength: 30,
                     maxLines: 1,
                     validator: (value) {
-                      if (value.isEmpty) {
+                      if (value!.isEmpty) {
                         return 'Enter Mailbox Name';
                       }
                       return null;
@@ -228,7 +228,7 @@ class _MailboxDetailScreenState extends State<MailboxDetailScreen> {
                     onChanged: (value) {
                       enabledSaveButton = value.isNotEmpty;
                       setState(() {
-                        fullEmail = value + '@' + selectedDomain.name;
+                        fullEmail = value + '@' + selectedDomain!.name;
                       });
                     },
                   ),
@@ -257,7 +257,7 @@ class _MailboxDetailScreenState extends State<MailboxDetailScreen> {
                     maxLength: 30,
                     maxLines: 1,
                     validator: (value) {
-                      if (value.isEmpty) {
+                      if (value!.isEmpty) {
                         return 'Enter Password';
                       }
                       return null;

@@ -36,7 +36,7 @@ class UserFirestoreRepository with ChangeNotifier {
     List<User> users = [];
     final querySnapshot = await collection().get();
     querySnapshot.docs.forEach((user) {
-      users.add(User.fromJson(user.data(), docID: user.id),
+      users.add(User.fromJson(user.data() as Map<String, dynamic>, docID: user.id),
       );
     });
     _users = users;

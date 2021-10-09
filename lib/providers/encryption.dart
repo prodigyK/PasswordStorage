@@ -8,7 +8,7 @@ class Encryption with ChangeNotifier {
 
   Map<String, String> get secureData => _secureData;
 
-  String encrypt({String text}) {
+  String encrypt({required String text}) {
     final key = Key.fromUtf8(_secureData['encryptKey']);
     final iv = IV.fromLength(16);
 
@@ -18,7 +18,7 @@ class Encryption with ChangeNotifier {
     return encrypted.base64;
   }
 
-  String decrypt({String encoded}) {
+  String decrypt({required String encoded}) {
     final key = Key.fromUtf8(_secureData['encryptKey']);
     final iv = IV.fromLength(16);
 

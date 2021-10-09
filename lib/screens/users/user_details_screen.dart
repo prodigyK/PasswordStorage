@@ -22,8 +22,8 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
   final _descriptionController = TextEditingController();
   final _passwordFocus = FocusNode();
   final _descriptionFocus = FocusNode();
-  User _user;
-  String userId;
+  late User _user;
+  late String userId;
   bool _isNew = false;
   bool firstInit = true;
   bool _isLoading = false;
@@ -31,7 +31,7 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
   @override
   void didChangeDependencies() {
     if (firstInit) {
-      final args = ModalRoute.of(context).settings.arguments as Map<String, Object>;
+      final args = ModalRoute.of(context)!.settings.arguments as Map<String, Object>?;
       _user = args != null
           ? args['user'] as User
           : User(id: '', name: '', password: '', description: '', dateTime: DateTime.now());
@@ -42,7 +42,7 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
       }
       _usernameController.text = _user.name;
       _passwordController.text =
-          _isNew ? '' : Provider.of<Encryption>(context, listen: false).decrypt(encoded: _user.password);
+          _isNew ? '' : Provider.of<Encryption>(context, listen: false).decrypt(encoded: _user.password!);
       _descriptionController.text = _user.description;
     }
     firstInit = false;
@@ -61,10 +61,10 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
   }
 
   Future<void> _saveForm() async {
-    if (!_formKey.currentState.validate()) {
+    if (!_formKey.currentState!.validate()) {
       return;
     }
-    _formKey.currentState.save();
+    _formKey.currentState!.save();
 
     setState(() {
       _isLoading = true;
@@ -156,7 +156,7 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
                         FocusScope.of(context).requestFocus(_passwordFocus);
                       },
                       validator: (value) {
-                        if (value.isEmpty) {
+                        if (value!.isEmpty) {
                           return 'Please provide a username';
                         }
                         return null;
@@ -190,7 +190,7 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
                         FocusScope.of(context).requestFocus(_descriptionFocus);
                       },
                       validator: (value) {
-                        if (value.isEmpty) {
+                        if (value!.isEmpty) {
                           return 'Please provide a password';
                         }
                         return null;

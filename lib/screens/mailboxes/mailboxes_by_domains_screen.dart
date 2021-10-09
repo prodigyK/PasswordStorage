@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:password_storage_app/models/domain.dart';
 import 'package:password_storage_app/models/service.dart';
@@ -22,7 +23,7 @@ class MailboxesByDomainsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildScaffold(BuildContext context, {double width}) {
+  Widget _buildScaffold(BuildContext context, {double? width}) {
     return Container(
       width: width,
       child: Scaffold(
@@ -35,16 +36,16 @@ class MailboxesByDomainsScreen extends StatelessWidget {
           margin: EdgeInsets.only(top: 8.0),
           child: StreamBuilder(
               stream: Provider.of<MailDomainRepository>(context, listen: false).snapshots(),
-              builder: (context, snapshot) {
+              builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return Center(child: CircularProgressIndicator());
                 }
-                final domainsDocs = snapshot.data.docs;
+                final domainsDocs = snapshot.data!.docs;
                 return FutureBuilder(
                   future: Provider.of<MailServiceRepository>(context, listen: false).collection().get(),
-                  builder: (context, serviceSnapshot) {
+                  builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> serviceSnapshot) {
                     if (serviceSnapshot.hasData) {
-                      final jsonList = serviceSnapshot.data.docs as List<dynamic>;
+                      final jsonList = serviceSnapshot.data!.docs;
                       List<Service> services = jsonList
                           .map((element) => Service.fromJson(element.data() as Map<String, dynamic>, docID: element.id))
                           .toList();
@@ -69,7 +70,7 @@ class MailboxesByDomainsScreen extends StatelessWidget {
 
 class DomainItem extends StatelessWidget {
   DomainItem({
-    Key key,
+    Key? key,
     this.docs,
     this.service,
     this.index,
@@ -77,7 +78,7 @@ class DomainItem extends StatelessWidget {
 
   final docs;
   final index;
-  final String service;
+  final String? service;
 
   @override
   Widget build(BuildContext context) {
@@ -103,7 +104,7 @@ class DomainItem extends StatelessWidget {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            subtitle: Text(service),
+            subtitle: Text(service!),
             trailing: Icon(
               Icons.arrow_forward_ios,
               size: 18,

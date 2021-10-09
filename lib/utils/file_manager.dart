@@ -13,7 +13,7 @@ class FileManager {
       final result = await FilePicker.platform.pickFiles(type: FileType.custom, allowedExtensions: ['txt']);
 
       if (result != null) {
-        File file = File(result.files.first.path);
+        File file = File(result.files.first.path!);
         print(file.absolute);
         users = _loadLoginsFromList(await file.readAsLines());
       }
@@ -36,6 +36,7 @@ class FileManager {
       String pass = data[1];
 
       users.add(User(
+        id: '',
         name: name,
         password: pass,
         description: '',

@@ -20,8 +20,8 @@ class _UserScreenState extends State<UserScreen> {
   String searchText = '';
   bool isSearch = false;
   bool isLoading = false;
-  List<User> originalUsers;
-  List<User> searchUsers;
+  List<User>? originalUsers;
+  List<User> searchUsers = [];
   List<User> users = [];
   Sort sort = Sort.ALFABETIC;
   bool firstInit = true;

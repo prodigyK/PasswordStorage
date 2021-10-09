@@ -28,7 +28,7 @@ class MailDomainRepository with ChangeNotifier {
     List<Domain> domains = [];
     final querySnapshot = await collection().get();
     querySnapshot.docs.forEach((doc) {
-      domains.add(Domain.fromJson(doc.data(), docID: doc.id));
+      domains.add(Domain.fromJson(doc.data() as Map<String, dynamic>, docID: doc.id));
     });
     return domains;
   }

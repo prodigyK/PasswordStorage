@@ -13,8 +13,8 @@ enum Sort {
 }
 
 class UserRepository with ChangeNotifier {
-  final String _token;
-  final String _userId;
+  final String? _token;
+  final String? _userId;
   List<User> _users = []; //DUMMY_USERS;
 
   UserRepository(this._token, this._userId);

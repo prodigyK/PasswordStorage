@@ -22,7 +22,7 @@ class MailboxesMainScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildScaffold(BuildContext context, {double width}) {
+  Widget _buildScaffold(BuildContext context, {required double width}) {
     return Container(
       width: width,
       alignment: Alignment.topCenter,
@@ -82,9 +82,9 @@ class MailboxesMainScreen extends StatelessWidget {
 
   Widget buildCategory(
     BuildContext context, {
-    @required String categoryName,
-    @required IconData iconData,
-    @required Function onPressed,
+    required String categoryName,
+    required IconData iconData,
+    required Function onPressed,
   }) {
     return GestureDetector(
       child: Container(
@@ -133,7 +133,7 @@ class MailboxesMainScreen extends StatelessWidget {
           ),
         ),
       ),
-      onTap: onPressed,
+      onTap: onPressed as void Function()?,
     );
   }
 }

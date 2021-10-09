@@ -20,18 +20,18 @@ class _MailDomainsDetailScreenState extends State<MailDomainsDetailScreen> {
   final _nameController = TextEditingController();
   final double prefixWidth = 80;
   bool _firstInit = true;
-  Domain domain;
-  bool _isNew;
-  Service selectedService = null;
+  late Domain domain;
+  late bool _isNew;
+  Service? selectedService = null;
   List<Service> services = [];
 
   @override
   void didChangeDependencies() async {
     if (_firstInit) {
-      final ref = ModalRoute.of(context).settings.arguments as Map<String, dynamic>;
+      final ref = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
       _isNew = ref['isNew'];
       if (!_isNew) {
-        final ref = ModalRoute.of(context).settings.arguments as Map<String, dynamic>;
+        final ref = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
         domain = ref['domain'];
       } else {
         domain = Domain(
@@ -53,15 +53,15 @@ class _MailDomainsDetailScreenState extends State<MailDomainsDetailScreen> {
   }
 
   void _saveForm() async {
-    if (!_formKey.currentState.validate()) {
+    if (!_formKey.currentState!.validate()) {
       return;
     }
 
     domain = Domain(
-      id: _isNew ? null : domain.id,
+      id: _isNew ? '' : domain.id,
       name: _nameController.text,
       modifiedAt: DateTime.now(),
-      serviceId: selectedService.id,
+      serviceId: selectedService!.id,
     );
 
     if (_isNew) {
@@ -114,7 +114,7 @@ class _MailDomainsDetailScreenState extends State<MailDomainsDetailScreen> {
     );
   }
 
-  Widget _buildScaffold(BuildContext context, {double width}) {
+  Widget _buildScaffold(BuildContext context, {double? width}) {
     return Container(
       width: width,
       child: Scaffold(
@@ -164,7 +164,7 @@ class _MailDomainsDetailScreenState extends State<MailDomainsDetailScreen> {
                       // FocusScope.of(context).requestFocus(_urlFocusNode);
                     },
                     validator: (value) {
-                      if (value.isEmpty) {
+                      if (value!.isEmpty) {
                         return 'Enter Domain Name';
                       }
                       return null;
@@ -199,7 +199,7 @@ class _MailDomainsDetailScreenState extends State<MailDomainsDetailScreen> {
                         height: 2,
                         color: Colors.transparent,
                       ),
-                      onChanged: (Service newValue) {
+                      onChanged: (Service? newValue) {
                         setState(() {
                           selectedService = newValue;
                         });

@@ -12,7 +12,7 @@ class MailServicesDetailScreen extends StatefulWidget {
 }
 
 class _MailServicesDetailScreen extends State<MailServicesDetailScreen> {
-  Service service;
+  Service? service;
   bool _firstInit = true;
   bool _isNew = true;
   bool _ssl = false;
@@ -28,30 +28,21 @@ class _MailServicesDetailScreen extends State<MailServicesDetailScreen> {
   @override
   void didChangeDependencies() {
     if (_firstInit) {
-      var ser = ModalRoute.of(context).settings.arguments as Map<String, Service>;
+      var ser = ModalRoute.of(context)!.settings.arguments as Map<String, Service>?;
       service = ser != null ? ser['service'] : null;
       _isNew = service == null;
     }
     _firstInit = false;
 
     if (!_isNew) {
-      _nameController.text = service.name;
-      _deliveryAddressController.text = service.deliveryAddress;
-      _deliveryPortController.text = service.deliveryPort;
-      _sendAddressController.text = service.sendAddress;
-      _sendPortController.text = service.sendPort;
-      _ssl = service.ssl == null ? false : service.ssl;
+      _nameController.text = service!.name;
+      _deliveryAddressController.text = service!.deliveryAddress;
+      _deliveryPortController.text = service!.deliveryPort;
+      _sendAddressController.text = service!.sendAddress;
+      _sendPortController.text = service!.sendPort;
+      _ssl = service!.ssl == null ? false : service!.ssl;
     } else {
-      service = Service(
-        id: null,
-        name: null,
-        deliveryAddress: null,
-        deliveryPort: null,
-        sendAddress: null,
-        sendPort: null,
-        ssl: null,
-        modifiedAt: DateTime.now(),
-      );
+      service = Service.empty();
     }
 
     super.didChangeDependencies();
@@ -69,11 +60,11 @@ class _MailServicesDetailScreen extends State<MailServicesDetailScreen> {
   }
 
   void _saveForm() async {
-    if (!_formKey.currentState.validate()) {
+    if (!_formKey.currentState!.validate()) {
       return;
     }
     service = Service(
-      id: service.id,
+      id: service!.id,
       name: _nameController.text,
       deliveryAddress: _deliveryAddressController.text,
       deliveryPort: _deliveryPortController.text,
@@ -94,13 +85,13 @@ class _MailServicesDetailScreen extends State<MailServicesDetailScreen> {
 
   Future<void> _addService() async {
     final provider = Provider.of<MailServiceRepository>(context, listen: false);
-    bool result = await provider.addService(service);
+    bool result = await provider.addService(service!);
     result ? _showSnackbar('Mail Service is Added') : _showSnackbar('Failed to Add Service');
   }
 
   Future<void> _updateService() async {
     final provider = Provider.of<MailServiceRepository>(context, listen: false);
-    bool result = await provider.updateService(service);
+    bool result = await provider.updateService(service!);
     result ? _showSnackbar('Mail Service is Updated') : _showSnackbar('Failed to Updated Service');
   }
 
@@ -127,7 +118,7 @@ class _MailServicesDetailScreen extends State<MailServicesDetailScreen> {
     );
   }
 
-  Widget _buildScaffold(BuildContext context, {double width}) {
+  Widget _buildScaffold(BuildContext context, {double? width}) {
     return Container(
       width: width,
       child: Scaffold(
@@ -161,7 +152,7 @@ class _MailServicesDetailScreen extends State<MailServicesDetailScreen> {
                       keyboardType: TextInputType.text,
                       textInputAction: TextInputAction.next,
                       validator: (value) {
-                        if (value.isEmpty) {
+                        if (value!.isEmpty) {
                           return 'Enter Domain Name';
                         }
                         return null;
@@ -178,7 +169,7 @@ class _MailServicesDetailScreen extends State<MailServicesDetailScreen> {
                         width: prefixWidth,
                         child: Text('POP/IMAP'),
                       ),
-                      placeholder: 'pop.' + '${service.name}',
+                      placeholder: 'pop.' + '${service!.name}',
                       keyboardType: TextInputType.text,
                       textInputAction: TextInputAction.next,
                       validator: (value) {
@@ -209,7 +200,7 @@ class _MailServicesDetailScreen extends State<MailServicesDetailScreen> {
                         width: prefixWidth,
                         child: Text('SMTP'),
                       ),
-                      placeholder: 'smtp.' + '${service.name}',
+                      placeholder: 'smtp.' + '${service!.name}',
                       keyboardType: TextInputType.text,
                       textInputAction: TextInputAction.next,
                       validator: (value) {

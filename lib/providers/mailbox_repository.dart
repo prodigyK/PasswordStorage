@@ -40,7 +40,7 @@ class MailboxRepository with ChangeNotifier {
     return mailboxes;
   }
 
-  Future<bool> contains(String mailbox, {String docID}) async {
+  Future<bool> contains(String mailbox, {String? docID}) async {
     final mailboxes = await getAllDocuments();
     bool exists = mailboxes.any((element) => element.name == mailbox);
     if (docID == null) {
