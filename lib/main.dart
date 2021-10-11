@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -8,6 +9,7 @@ import 'package:password_storage_app/providers/mail_domain_repository.dart';
 import 'package:password_storage_app/providers/mail_service_repository.dart';
 import 'package:password_storage_app/providers/mailbox_repository.dart';
 import 'package:password_storage_app/providers/user_firestore_repository.dart';
+import 'package:password_storage_app/screens/auth/auth_screen.dart';
 import 'package:password_storage_app/screens/mailboxes/mailboxes_all_screen.dart';
 import 'package:password_storage_app/screens/mailboxes/mailboxes_by_domains_screen.dart';
 import 'package:password_storage_app/screens/hostings/hosting_detail_screen.dart';
@@ -81,7 +83,15 @@ class MyApp extends StatelessWidget {
               ),
           visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
-        home: CategoriesScreen(),
+        home: StreamBuilder(
+          stream: FirebaseAuth.instance.authStateChanges(),
+          builder: (context, snapshot) {
+            if(snapshot.hasData) {
+              return CategoriesScreen();
+            }
+            return AuthScreen();
+          }
+        ),
         routes: {
           ServersScreen.routeName: (ctx) => ServersScreen(),
           SettingsScreen.routeName: (ctx) => SettingsScreen(),
