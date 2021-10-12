@@ -25,7 +25,7 @@ class MailServicesScreen extends StatelessWidget {
     return Container(
       width: width,
       child: Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.blue.shade200,
         appBar: AppBar(
           title: Text('Mail Services'),
           backgroundColor: Colors.blue.shade200,
@@ -79,7 +79,7 @@ class ServiceItem extends StatelessWidget {
         child: Card(
           elevation: 5,
           margin: EdgeInsets.zero,
-          color: Colors.grey.shade200,
+          color: Colors.grey.shade100,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
           child: ListTile(
             leading: Icon(Icons.miscellaneous_services, size: 30,),
