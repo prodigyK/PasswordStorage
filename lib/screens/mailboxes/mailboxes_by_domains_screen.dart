@@ -27,40 +27,42 @@ class MailboxesByDomainsScreen extends StatelessWidget {
     return Container(
       width: width,
       child: Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.blue.shade200,
         appBar: AppBar(
           title: Text('Mailboxes by Domains'),
           backgroundColor: Colors.blue.shade200,
         ),
         body: Container(
           margin: EdgeInsets.only(top: 8.0),
-          child: StreamBuilder(
-              stream: Provider.of<MailDomainRepository>(context, listen: false).snapshots(),
+          child: FutureBuilder(
+              future: Provider.of<MailDomainRepository>(context, listen: false).collection().get(),
               builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
+                if (snapshot.hasData) {
+                  final domainsDocs = snapshot.data!.docs;
+                  return FutureBuilder(
+                    future: Provider.of<MailServiceRepository>(context, listen: false).collection().get(),
+                    builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> serviceSnapshot) {
+                      if (serviceSnapshot.hasData) {
+                        final jsonList = serviceSnapshot.data!.docs;
+                        List<Service> services = jsonList
+                            .map((element) =>
+                                Service.fromJson(element.data() as Map<String, dynamic>, docID: element.id))
+                            .toList();
+                        return ListView.builder(
+                            itemCount: domainsDocs.length,
+                            itemBuilder: (ctx, i) {
+                              final domainRef = domainsDocs[i];
+                              final service = services.firstWhere((element) => element.id == domainRef['service_id']);
+                              return DomainItem(
+                                  docs: domainsDocs, index: i, key: ValueKey(domainRef.id), service: service.name);
+                            });
+                      }
+                      return Center(child: CircularProgressIndicator());
+                    },
+                  );
+                } else {
                   return Center(child: CircularProgressIndicator());
                 }
-                final domainsDocs = snapshot.data!.docs;
-                return FutureBuilder(
-                  future: Provider.of<MailServiceRepository>(context, listen: false).collection().get(),
-                  builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> serviceSnapshot) {
-                    if (serviceSnapshot.hasData) {
-                      final jsonList = serviceSnapshot.data!.docs;
-                      List<Service> services = jsonList
-                          .map((element) => Service.fromJson(element.data() as Map<String, dynamic>, docID: element.id))
-                          .toList();
-                      return ListView.builder(
-                          itemCount: domainsDocs.length,
-                          itemBuilder: (ctx, i) {
-                            final domainRef = domainsDocs[i];
-                            final service = services.firstWhere((element) => element.id == domainRef['service_id']);
-                            return DomainItem(
-                                docs: domainsDocs, index: i, key: ValueKey(domainRef.id), service: service.name);
-                          });
-                    }
-                    return Center(child: CircularProgressIndicator());
-                  },
-                );
               }),
         ),
       ),
@@ -90,7 +92,7 @@ class DomainItem extends StatelessWidget {
         child: Card(
           elevation: 5,
           margin: EdgeInsets.zero,
-          color: Colors.grey.shade200,
+          color: Colors.grey.shade100,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
           child: ListTile(
             leading: Icon(

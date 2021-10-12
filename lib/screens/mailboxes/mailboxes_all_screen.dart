@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:password_storage_app/models/domain.dart';
 import 'package:password_storage_app/models/mailbox.dart';
-import 'package:password_storage_app/providers/encryption.dart';
 import 'package:password_storage_app/providers/mailbox_repository.dart';
 import 'package:password_storage_app/screens/mailboxes/mailbox_detail_screen.dart';
 import 'package:password_storage_app/widgets/mail_search_delegate.dart';
+import 'package:password_storage_app/widgets/mailbox_item.dart';
 import 'package:provider/provider.dart';
 
 class MailboxAllScreen extends StatefulWidget {
@@ -19,27 +19,40 @@ class MailboxAllScreen extends StatefulWidget {
 
 class _MailboxAllScreenState extends State<MailboxAllScreen> {
   late var query;
+  List<Mailbox> mailboxes = [];
+  List<Mailbox> searchMailboxes = [];
   bool firstInit = true;
   String title = 'All Mailboxes';
   final _searchController = TextEditingController();
   String searchText = '';
+  bool isDomain = false;
 
   @override
-  void didChangeDependencies() {
+  void didChangeDependencies() async {
     if (firstInit) {
       final json = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
       Domain? domain = json['domain'];
       if (domain == null) {
-        query = Provider.of<MailboxRepository>(context, listen: false).collection();
+        mailboxes = await Provider.of<MailboxRepository>(context, listen: false).getAllDocuments();
       } else {
+        isDomain = true;
         title = domain.name;
-        query = Provider.of<MailboxRepository>(context, listen: false).collection().where(
+        await Provider.of<MailboxRepository>(context, listen: false)
+            .collection()
+            .where(
               'domain_id',
               isEqualTo: domain.id,
-            );
+            )
+            .get()
+            .then((QuerySnapshot snapshot) {
+          snapshot.docs.forEach((json) {
+            mailboxes.add(Mailbox.fromJson(json.data() as Map<String, dynamic>, docID: json.id));
+          });
+        });
       }
+      setState(() {});
+      firstInit = false;
     }
-    firstInit = false;
 
     super.didChangeDependencies();
   }
@@ -58,6 +71,10 @@ class _MailboxAllScreenState extends State<MailboxAllScreen> {
   }
 
   Widget _buildScaffold(BuildContext context, {required double width}) {
+    searchMailboxes = searchText.isEmpty
+        ? mailboxes
+        : mailboxes.where((mailbox) => mailbox.name.toLowerCase().contains(searchText.toLowerCase())).toList();
+
     return Container(
       width: width,
       alignment: Alignment.topCenter,
@@ -86,111 +103,64 @@ class _MailboxAllScreenState extends State<MailboxAllScreen> {
                   },
                 )
               ]),
-          backgroundColor: Colors.white,
-          body: Column(
+          backgroundColor: Colors.blue.shade200,
+          body: Stack(
             children: [
-              Container(
-                height: 50,
-                margin: EdgeInsets.only(bottom: 0.0),
-                decoration: BoxDecoration(
-                  border: Border.all(width: 0.5, color: Colors.grey),
-                  borderRadius: BorderRadius.only(
-                    bottomLeft: Radius.circular(8.0),
-                    bottomRight: Radius.circular(8.0),
-                  ),
-                ),
-                child: CupertinoSearchTextField(
-                  controller: _searchController,
-                  backgroundColor: Colors.white,
-                  onChanged: (value) {
-                    searchText = value;
-                    setState(() {
-                      query = Provider.of<MailboxRepository>(context, listen: false)
-                          .collection()
-                          .where(
-                            'name',
-                            isGreaterThanOrEqualTo: searchText,
-                          )
-                          .where('name', isLessThanOrEqualTo: searchText + "\uf8ff");
-                    });
-                  },
-                  onSubmitted: (value) {},
-                  onSuffixTap: () {
-                    setState(() {
-                      _searchController.clear();
-                      searchText = '';
-                      setState(() {
-                        query = Provider.of<MailboxRepository>(context, listen: false).collection();
-                      });
-                    });
-                  },
-                ),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Center(
+                      child: Icon(
+                    Icons.email_outlined,
+                    size: 150,
+                    color: Colors.blue.shade100,
+                  )),
+                  SizedBox(
+                    height: 150,
+                  )
+                ],
               ),
-              // SizedBox(height: 5),
-              Expanded(
-                child: Container(
-                  margin: EdgeInsets.only(top: 0.0),
-                  child: StreamBuilder(
-                    stream: query.snapshots(),
-                    builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return Center(child: CircularProgressIndicator());
-                      }
-                      final docs = snapshot.data!.docs;
-                      return ListView.builder(
-                          itemCount: docs.length,
-                          itemBuilder: (ctx, i) {
-                            final password =
-                                Provider.of<Encryption>(context, listen: false).decrypt(encoded: docs[i]['password']);
-                            return GestureDetector(
-                              key: ValueKey(docs[i].id),
-                              child: Container(
-                                // color: Colors.black,
-                                margin: EdgeInsets.symmetric(horizontal: 8.0, vertical: 1.0),
-                                padding: EdgeInsets.symmetric(vertical: 1.0),
-                                child: Card(
-                                  elevation: 1,
-                                  margin: EdgeInsets.zero,
-                                  color: Colors.grey    .shade50,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8.0),
-                                    side: BorderSide(width: 0.2),
-                                  ),
-                                  child: ListTile(
-                                    leading: Icon(
-                                      Icons.email,
-                                      size: 30,
-                                    ),
-                                    title: Text(
-                                      docs[i]['name'],
-                                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-                                    ),
-                                    subtitle: Text(password),
-                                    trailing: Icon(
-                                      Icons.arrow_forward_ios,
-                                      size: 18,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              onTap: () {
-                                final docID = docs[i].id;
-                                Mailbox mailbox =
-                                    Mailbox.fromJson(docs[i].data() as Map<String, dynamic>, docID: docID);
-                                Navigator.pushNamed(
-                                  context,
-                                  MailboxDetailScreen.routeName,
-                                  arguments: {
-                                    'isNew': false,
-                                    'mailbox': mailbox,
-                                  },
-                                );
-                              },
-                            );
+              Column(
+                children: [
+                  if (!isDomain)
+                    Container(
+                      height: 50,
+                      margin: EdgeInsets.only(bottom: 0.0),
+                      decoration: BoxDecoration(
+                        border: Border.all(width: 0.5, color: Colors.grey),
+                        borderRadius: BorderRadius.only(
+                          bottomLeft: Radius.circular(8.0),
+                          bottomRight: Radius.circular(8.0),
+                        ),
+                      ),
+                      child: CupertinoSearchTextField(
+                        controller: _searchController,
+                        backgroundColor: Colors.white,
+                        onChanged: (value) {
+                          setState(() {
+                            searchText = value;
                           });
-                    },
+                        },
+                        onSuffixTap: () {
+                          setState(() {
+                            _searchController.clear();
+                            setState(() {
+                              searchText = '';
+                            });
+                          });
+                        },
+                      ),
+                    ),
+                  // SizedBox(height: 5),
+                  Expanded(
+                    child: ListView.builder(
+                        padding: EdgeInsets.only(top: 8.0, bottom: 16.0),
+                        itemCount: searchMailboxes.length,
+                        itemBuilder: (ctx, i) {
+                          return MailboxItem(mailbox: searchMailboxes.elementAt(i));
+                        }),
                   ),
-                ),
+                ],
               ),
             ],
           ),
