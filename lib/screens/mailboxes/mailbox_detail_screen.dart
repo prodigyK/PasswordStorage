@@ -19,6 +19,7 @@ class _MailboxDetailScreenState extends State<MailboxDetailScreen> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _descriptionController = TextEditingController();
   Domain? selectedDomain;
   bool firstInit = true;
   List<Domain> domains = [];
@@ -31,6 +32,7 @@ class _MailboxDetailScreenState extends State<MailboxDetailScreen> {
   void dispose() {
     _nameController.dispose();
     _passwordController.dispose();
+    _descriptionController.dispose();
     super.dispose();
   }
 
@@ -46,6 +48,7 @@ class _MailboxDetailScreenState extends State<MailboxDetailScreen> {
           password: '',
           modifiedAt: DateTime.now(),
           domainId: '',
+          description: '',
         );
       } else {
         mailbox = ref['mailbox'];
@@ -54,6 +57,7 @@ class _MailboxDetailScreenState extends State<MailboxDetailScreen> {
       _nameController.text = isNew! ? '' : mailbox!.name.split('@')[0];
       _passwordController.text =
           isNew! ? '' : Provider.of<Encryption>(context, listen: false).decrypt(encoded: mailbox!.password);
+      _descriptionController.text = mailbox!.description;
 
       domains = await Provider.of<MailDomainRepository>(context, listen: false).getAllDocuments();
       setState(() {
@@ -88,6 +92,7 @@ class _MailboxDetailScreenState extends State<MailboxDetailScreen> {
       password: Provider.of<Encryption>(context, listen: false).encrypt(text: _passwordController.text),
       domainId: selectedDomain!.id,
       modifiedAt: DateTime.now(),
+      description: _descriptionController.text,
     );
 
     if (isNew!) {
@@ -107,7 +112,7 @@ class _MailboxDetailScreenState extends State<MailboxDetailScreen> {
       await _updateMailbox();
     }
 
-    Navigator.of(context).pop();
+    Navigator.of(context).pop(true);
   }
 
   Future<void> _addMailbox() async {
@@ -262,6 +267,30 @@ class _MailboxDetailScreenState extends State<MailboxDetailScreen> {
                       }
                       return null;
                     },
+                  ),
+                  TextFormField(
+                    controller: _descriptionController,
+                    decoration: InputDecoration(
+                      // labelText: 'Email Address',
+                      prefixIcon: GestureDetector(
+                        child: Icon(Icons.info_outline),
+                        onTap: () {
+                          Clipboard.setData(ClipboardData(text: "${_descriptionController.text}"));
+                          _showSnackbar('Copied to Clipboard');
+                        },
+                      ),
+                      suffixIcon: GestureDetector(
+                        child: Icon(Icons.remove_circle_outline),
+                        onTap: () {
+                          _descriptionController.clear();
+                        },
+                      ),
+                    ),
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                    keyboardType: TextInputType.text,
+                    textInputAction: TextInputAction.next,
+                    maxLength: 30,
+                    maxLines: 1,
                   ),
                   SizedBox(height: 20),
                   Container(

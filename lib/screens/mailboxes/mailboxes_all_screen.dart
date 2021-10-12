@@ -157,7 +157,21 @@ class _MailboxAllScreenState extends State<MailboxAllScreen> {
                         padding: EdgeInsets.only(top: 8.0, bottom: 16.0),
                         itemCount: searchMailboxes.length,
                         itemBuilder: (ctx, i) {
-                          return MailboxItem(mailbox: searchMailboxes.elementAt(i));
+                          return MailboxItem(
+                              mailbox: searchMailboxes.elementAt(i),
+                              navigate: () {
+                                Navigator.pushNamed(
+                                  context,
+                                  MailboxDetailScreen.routeName,
+                                  arguments: {
+                                    'isNew': false,
+                                    'mailbox': searchMailboxes.elementAt(i),
+                                  },
+                                ).then((value) async {
+                                  mailboxes = await Provider.of<MailboxRepository>(context, listen: false).getAllDocuments();
+                                  setState(() {});
+                                });
+                              });
                         }),
                   ),
                 ],

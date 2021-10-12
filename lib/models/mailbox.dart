@@ -4,6 +4,7 @@ class Mailbox {
   final String password;
   final String domainId;
   final DateTime modifiedAt;
+  final String description;
 
   Mailbox({
     required this.id,
@@ -11,6 +12,7 @@ class Mailbox {
     required this.password,
     required this.domainId,
     required this.modifiedAt,
+    required this.description,
   });
 
   factory Mailbox.fromJson(Map<String, dynamic> json, {String? docID}) {
@@ -20,6 +22,7 @@ class Mailbox {
       password: json['password'],
       domainId: json['domain_id'],
       modifiedAt: DateTime.parse(json['modifiedAt']),
+      description: json['description'],
     );
   }
 
@@ -29,6 +32,7 @@ class Mailbox {
       'password': password,
       'domain_id': domainId,
       'modifiedAt': modifiedAt.toIso8601String(),
+      'description': description,
     };
   }
 }

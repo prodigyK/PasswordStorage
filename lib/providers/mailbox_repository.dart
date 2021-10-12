@@ -23,6 +23,10 @@ class MailboxRepository with ChangeNotifier {
     return collection().doc(mailbox.id).update(mailbox.toJson()).then((value) => true).catchError((error) => false);
   }
 
+  Future<bool> updateField(String id) {
+    return collection().doc(id).update({'description': ''}).then((value) => true).catchError((error) => false);
+  }
+
   Future<List<Mailbox>> getAllDocuments() async {
     List<Mailbox> mailboxes = [];
     final querySnapshot = await collection().get();
@@ -34,6 +38,7 @@ class MailboxRepository with ChangeNotifier {
           password: mailbox['password'],
           domainId: mailbox['domain_id'],
           modifiedAt: DateTime.parse(mailbox['modifiedAt']),
+          description: mailbox['description'],
         ),
       );
     });
@@ -46,7 +51,7 @@ class MailboxRepository with ChangeNotifier {
     if (docID == null) {
       return exists;
     } else {
-      if(exists) {
+      if (exists) {
         final doc = mailboxes.firstWhere((element) => element.name == mailbox);
         return doc.id == docID; // Means the same doc
       } else {

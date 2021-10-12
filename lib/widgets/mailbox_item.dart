@@ -1,17 +1,17 @@
-
 import 'package:flutter/material.dart';
 import 'package:password_storage_app/models/mailbox.dart';
 import 'package:password_storage_app/providers/encryption.dart';
-import 'package:password_storage_app/screens/mailboxes/mailbox_detail_screen.dart';
 import 'package:provider/provider.dart';
 
 class MailboxItem extends StatelessWidget {
   const MailboxItem({
     Key? key,
     required this.mailbox,
+    required this.navigate,
   }) : super(key: key);
 
   final Mailbox mailbox;
+  final Function()? navigate;
 
   @override
   Widget build(BuildContext context) {
@@ -48,16 +48,7 @@ class MailboxItem extends StatelessWidget {
           ),
         ),
       ),
-      onTap: () {
-        Navigator.pushNamed(
-          context,
-          MailboxDetailScreen.routeName,
-          arguments: {
-            'isNew': false,
-            'mailbox': mailbox,
-          },
-        );
-      },
+      onTap: navigate,
     );
   }
 }

@@ -5,6 +5,7 @@ import 'package:password_storage_app/models/user.dart';
 import 'package:password_storage_app/providers/encryption.dart';
 import 'package:password_storage_app/providers/hosting_firestore_repository.dart';
 import 'package:password_storage_app/providers/hosting_repository.dart';
+import 'package:password_storage_app/providers/mailbox_repository.dart';
 import 'package:password_storage_app/providers/user_firestore_repository.dart';
 import 'package:password_storage_app/providers/user_repository.dart';
 import 'package:provider/provider.dart';
@@ -33,7 +34,28 @@ class _SettingsScreenState extends State<SettingsScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Expanded(child: Center(child: Text('Under construction...', style: TextStyle(fontSize: 24)))),
+              Expanded(
+                  child: Column(
+                children: [
+                  Center(child: Text('Under construction...', style: TextStyle(fontSize: 24))),
+                  ElevatedButton(
+                    child: Text('Load hostings into Firestore'),
+                    onPressed: () async {
+                      final provider = Provider.of<MailboxRepository>(context, listen: false);
+                      await provider.collection().get().then((snapshot) {
+                        snapshot.docs.forEach((doc) async {
+                          print(doc.id);
+                          await provider.updateField(doc.id);
+                        });
+                      });
+
+                      setState(() {
+                        text = 'Completed';
+                      });
+                    },
+                  ),
+                ],
+              )),
               ElevatedButton.icon(
                 icon: Icon(Icons.logout),
                 label: Text('Sign Out'),
@@ -43,40 +65,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 },
               ),
               SizedBox(height: 20),
-              // ElevatedButton(
-              //   child: Text('Load hostings into Firestore'),
-              //   onPressed: () {
-              //     final provider = Provider.of<HostingRepository>(context, listen: false);
-              //     provider.fetchAndSetHostings();
-              //     final providerFirestore = Provider.of<HostingFirestoreRepository>(context, listen: false);
-              //     int count = 0;
-              //     provider.hostings.forEach((hosting) {
-              //       // if(count > 2) {
-              //       //   return;
-              //       // }
-              //       final cryptedHostingPassword = Provider.of<Encryption>(context, listen: false).encrypt(text: hosting.hostingPass);
-              //       final cryptedRdpPassword = Provider.of<Encryption>(context, listen: false).encrypt(text: hosting.rdpPass);
-              //       final newHosting =  Hosting(
-              //         id: hosting.id,
-              //         name: hosting.name,
-              //         hostingName: hosting.hostingName,
-              //         hostingLogin: hosting.hostingLogin,
-              //         hostingPass: cryptedHostingPassword,
-              //         rdpIp: hosting.rdpIp,
-              //         rdpLogin: hosting.rdpLogin,
-              //         rdpPass: cryptedRdpPassword,
-              //       );
-              //       providerFirestore.addHosting(newHosting);
-              //       print(newHosting.name);
-              //       print(newHosting.hostingPass);
-              //       print(Provider.of<Encryption>(context, listen: false).decrypt(encoded: cryptedHostingPassword));
-              //       count++;
-              //     });
-              //     setState(() {
-              //       text = 'Completed';
-              //     });
-              //   },
-              // ),
+
               // SizedBox(height: 20.0),
               // Center(child: Text('Under construction...', style: TextStyle(fontSize: 24))),
             ],
