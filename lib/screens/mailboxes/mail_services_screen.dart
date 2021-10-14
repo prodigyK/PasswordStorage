@@ -40,8 +40,8 @@ class MailServicesScreen extends StatelessWidget {
         ),
         body: Container(
           margin: EdgeInsets.only(top: 8.0),
-          child: StreamBuilder(
-              stream: Provider.of<MailServiceRepository>(context, listen: false).snapshots(),
+          child: FutureBuilder(
+              future: Provider.of<MailServiceRepository>(context, listen: false).collection().orderBy('name').get(),
               builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return Center(child: CircularProgressIndicator());

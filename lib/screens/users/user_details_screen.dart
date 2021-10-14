@@ -139,7 +139,7 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
                         prefixIcon: GestureDetector(
                           child: Icon(FontAwesome5.user),
                           onTap: () {
-                            Clipboard.setData(ClipboardData(text: "${_user.name}"));
+                            Clipboard.setData(ClipboardData(text: "${_usernameController.text}"));
                             _showSnackbar('Copied to Clipboard');
                           },
                         ),
@@ -173,7 +173,7 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
                         prefixIcon: GestureDetector(
                           child: Icon(Icons.security),
                           onTap: () {
-                            Clipboard.setData(ClipboardData(text: "${_user.password}"));
+                            Clipboard.setData(ClipboardData(text: "${_passwordController.text}"));
                             _showSnackbar('Copied to Clipboard');
                           },
                         ),
@@ -207,7 +207,7 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
                         prefixIcon: GestureDetector(
                           child: Icon(Icons.description),
                           onTap: () {
-                            Clipboard.setData(ClipboardData(text: "${_user.description}"));
+                            Clipboard.setData(ClipboardData(text: "${_descriptionController.text}"));
                             _showSnackbar('Copied to Clipboard');
                           },
                         ),

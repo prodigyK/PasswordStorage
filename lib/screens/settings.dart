@@ -34,28 +34,28 @@ class _SettingsScreenState extends State<SettingsScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Expanded(
-                  child: Column(
-                children: [
-                  Center(child: Text('Under construction...', style: TextStyle(fontSize: 24))),
-                  ElevatedButton(
-                    child: Text('Load hostings into Firestore'),
-                    onPressed: () async {
-                      final provider = Provider.of<MailboxRepository>(context, listen: false);
-                      await provider.collection().get().then((snapshot) {
-                        snapshot.docs.forEach((doc) async {
-                          print(doc.id);
-                          await provider.updateField(doc.id);
-                        });
-                      });
-
-                      setState(() {
-                        text = 'Completed';
-                      });
-                    },
-                  ),
-                ],
-              )),
+              // Expanded(
+              //     child: Column(
+              //   children: [
+              //     Center(child: Text('Under construction...', style: TextStyle(fontSize: 24))),
+              //     ElevatedButton(
+              //       child: Text('Load hostings into Firestore'),
+              //       onPressed: () async {
+              //         final provider = Provider.of<MailboxRepository>(context, listen: false);
+              //         await provider.collection().get().then((snapshot) {
+              //           snapshot.docs.forEach((doc) async {
+              //             print(doc.id);
+              //             await provider.updateField(doc.id);
+              //           });
+              //         });
+              //
+              //         setState(() {
+              //           text = 'Completed';
+              //         });
+              //       },
+              //     ),
+              //   ],
+              // )),
               ElevatedButton.icon(
                 icon: Icon(Icons.logout),
                 label: Text('Sign Out'),

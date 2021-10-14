@@ -26,7 +26,7 @@ class MailDomainRepository with ChangeNotifier {
 
   Future<List<Domain>> getAllDocuments() async {
     List<Domain> domains = [];
-    final querySnapshot = await collection().get();
+    final querySnapshot = await collection().orderBy('name').get();
     querySnapshot.docs.forEach((doc) {
       domains.add(Domain.fromJson(doc.data() as Map<String, dynamic>, docID: doc.id));
     });

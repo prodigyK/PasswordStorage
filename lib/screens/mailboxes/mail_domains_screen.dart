@@ -46,8 +46,8 @@ class MailDomainsScreen extends StatelessWidget {
         ),
         body: Container(
           margin: EdgeInsets.only(top: 8.0),
-          child: StreamBuilder(
-              stream: Provider.of<MailDomainRepository>(context, listen: false).snapshots(),
+          child: FutureBuilder(
+              future: Provider.of<MailDomainRepository>(context, listen: false).collection().orderBy('name').get(),
               builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return Center(child: CircularProgressIndicator());
@@ -96,6 +96,7 @@ class DomainItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       child: Container(
+        height: 65,
         margin: EdgeInsets.symmetric(horizontal: 8.0, vertical: 2.0),
         padding: EdgeInsets.symmetric(vertical: 2.0),
         decoration: BoxDecoration(borderRadius: BorderRadius.circular(16.0)),

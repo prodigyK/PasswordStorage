@@ -271,7 +271,6 @@ class _MailboxDetailScreenState extends State<MailboxDetailScreen> {
                   TextFormField(
                     controller: _descriptionController,
                     decoration: InputDecoration(
-                      // labelText: 'Email Address',
                       prefixIcon: GestureDetector(
                         child: Icon(Icons.info_outline),
                         onTap: () {
@@ -288,22 +287,31 @@ class _MailboxDetailScreenState extends State<MailboxDetailScreen> {
                     ),
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                     keyboardType: TextInputType.text,
-                    textInputAction: TextInputAction.next,
+                    textInputAction: TextInputAction.done,
                     maxLength: 30,
                     maxLines: 1,
+                    onFieldSubmitted: (value) {
+                      _saveForm;
+                    },
                   ),
                   SizedBox(height: 20),
-                  Container(
-                    width: double.infinity,
-                    height: 50,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8.0),
-                      color: Colors.blue.shade100,
-                    ),
-                    child: Center(
-                      child: Text(
-                        fullEmail,
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  GestureDetector(
+                    onTap: () {
+                      Clipboard.setData(ClipboardData(text: "${fullEmail}"));
+                      _showSnackbar('Copied to Clipboard');
+                    },
+                    child: Container(
+                      width: double.infinity,
+                      height: 50,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8.0),
+                        color: Colors.blue.shade100,
+                      ),
+                      child: Center(
+                        child: Text(
+                          fullEmail,
+                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                        ),
                       ),
                     ),
                   ),
