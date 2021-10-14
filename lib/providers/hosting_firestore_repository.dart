@@ -9,10 +9,6 @@ class HostingFirestoreRepository with ChangeNotifier {
   List<Hosting> get hostings => [..._hostings];
   FirebaseFirestore get instance => _firestore;
 
-  Stream<QuerySnapshot> snapshots() {
-    return _firestore.collection('hostings').snapshots();
-  }
-
   CollectionReference collection() {
     return _firestore.collection('hostings');
   }

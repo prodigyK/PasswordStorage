@@ -7,10 +7,6 @@ class MailServiceRepository with ChangeNotifier {
 
   FirebaseFirestore get instance => _firestore;
 
-  Stream<QuerySnapshot> snapshots() {
-    return _firestore.collection('services').snapshots();
-  }
-
   CollectionReference collection() {
     return _firestore.collection('services');
   }
