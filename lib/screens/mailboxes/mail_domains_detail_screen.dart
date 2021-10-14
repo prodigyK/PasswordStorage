@@ -118,7 +118,6 @@ class _MailDomainsDetailScreenState extends State<MailDomainsDetailScreen> {
     return Container(
       width: width,
       child: Scaffold(
-        backgroundColor: Colors.white,
         appBar: AppBar(
           title: Text('Details'),
           backgroundColor: Colors.blue.shade200,
