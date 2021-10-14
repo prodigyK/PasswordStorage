@@ -116,164 +116,191 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(_isNew ? 'New User' : 'Details'),
-        backgroundColor: Colors.green.shade200,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Form(
-          key: _formKey,
-          child: _isLoading
-              ? Center(child: CircularProgressIndicator())
-              : Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    TextFormField(
-                      controller: _usernameController,
-                      keyboardType: TextInputType.name,
-                      textInputAction: TextInputAction.next,
-                      decoration: InputDecoration(
-                        labelText: 'Username',
-                        prefixIcon: GestureDetector(
-                          child: Icon(FontAwesome5.user),
-                          onTap: () {
-                            Clipboard.setData(ClipboardData(text: "${_usernameController.text}"));
-                            _showSnackbar('Copied to Clipboard');
-                          },
-                        ),
-                        suffixIcon: GestureDetector(
-                          child: Icon(Icons.remove_circle_outline),
-                          onTap: () {
-                            _usernameController.clear();
-                          },
-                        ),
-                      ),
-                      style: TextStyle(fontWeight: FontWeight.bold),
-//                maxLength: 25,
-                      onFieldSubmitted: (_) {
-                        FocusScope.of(context).requestFocus(_passwordFocus);
-                      },
-                      validator: (value) {
-                        if (value!.isEmpty) {
-                          return 'Please provide a username';
-                        }
-                        return null;
-                      },
-                    ),
-                    SizedBox(height: 5),
-                    TextFormField(
-                      controller: _passwordController,
-                      focusNode: _passwordFocus,
-                      keyboardType: TextInputType.text,
-                      textInputAction: TextInputAction.next,
-                      decoration: InputDecoration(
-                        labelText: 'Password',
-                        prefixIcon: GestureDetector(
-                          child: Icon(Icons.security),
-                          onTap: () {
-                            Clipboard.setData(ClipboardData(text: "${_passwordController.text}"));
-                            _showSnackbar('Copied to Clipboard');
-                          },
-                        ),
-                        suffixIcon: GestureDetector(
-                          child: Icon(Icons.remove_circle_outline),
-                          onTap: () {
-                            _passwordController.clear();
-                          },
-                        ),
-                      ),
-                      style: TextStyle(fontWeight: FontWeight.bold),
-//                maxLength: 25,
-                      onFieldSubmitted: (_) {
-                        FocusScope.of(context).requestFocus(_descriptionFocus);
-                      },
-                      validator: (value) {
-                        if (value!.isEmpty) {
-                          return 'Please provide a password';
-                        }
-                        return null;
-                      },
-                    ),
-                    SizedBox(height: 5),
-                    TextFormField(
-                      controller: _descriptionController,
-                      focusNode: _descriptionFocus,
-                      keyboardType: TextInputType.text,
-                      textInputAction: TextInputAction.done,
-                      decoration: InputDecoration(
-                        labelText: 'Description',
-                        prefixIcon: GestureDetector(
-                          child: Icon(Icons.description),
-                          onTap: () {
-                            Clipboard.setData(ClipboardData(text: "${_descriptionController.text}"));
-                            _showSnackbar('Copied to Clipboard');
-                          },
-                        ),
-                        suffixIcon: GestureDetector(
-                          child: Icon(Icons.remove_circle_outline),
-                          onTap: () {
-                            _descriptionController.clear();
-                          },
-                        ),
-                      ),
-                      style: TextStyle(),
-                      onFieldSubmitted: (_) {},
-                      validator: (value) {
-                        return null;
-                      },
-                    ),
-                    SizedBox(height: 16),
-                    Row(
-                      children: [
-                        Text(
-                          'Modified Date: ',
-                          // style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        Text('${DateFormat('dd-MM-yyyy').format(_user.dateTime)}'),
-                      ],
-                    ),
-                    SizedBox(height: 16),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: CupertinoButton(
-                            color: Colors.green.shade300,
-                            child: Text(_isNew ? 'Add' : 'Change'),
-                            onPressed: _saveForm,
+    return Center(
+      child: LayoutBuilder(builder: (context, constraints) {
+        if (constraints.maxWidth > 600) {
+          return _buildScaffold(context, width: 600);
+        } else {
+          return _buildScaffold(context, width: double.infinity);
+        }
+      }),
+    );
+  }
+
+  Widget _buildScaffold(BuildContext context, {required double width}) {
+    return Container(
+      width: width,
+      child: ConstrainedBox(
+        constraints: BoxConstraints(maxWidth: width),
+        child: Scaffold(
+        appBar: AppBar(
+          title: Text(_isNew ? 'New User' : 'Details'),
+          backgroundColor: Colors.green.shade200,
+        ),
+        body: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Form(
+            key: _formKey,
+            child: _isLoading
+                ? Center(child: CircularProgressIndicator())
+                : Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      TextFormField(
+                        controller: _usernameController,
+                        keyboardType: TextInputType.name,
+                        textInputAction: TextInputAction.next,
+                        decoration: InputDecoration(
+                          labelText: 'Username',
+                          prefixIcon: GestureDetector(
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                              child: Icon(FontAwesome5.user),
+                            ),
+                            onTap: () {
+                              Clipboard.setData(ClipboardData(text: "${_usernameController.text}"));
+                              _showSnackbar('Copied to Clipboard');
+                            },
+                          ),
+                          suffixIcon: GestureDetector(
+                            child: Icon(Icons.remove_circle_outline),
+                            onTap: () {
+                              _usernameController.clear();
+                            },
                           ),
                         ),
-                      ],
-                    ),
-                    SizedBox(height: 20),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Container(
-                            height: 50,
-                            child: OutlinedButton(
-                              child: Text('Copy \"USER : PASSWORD\"', style: TextStyle(fontWeight: FontWeight.bold)),
-                              style: ButtonStyle(
-                                backgroundColor: MaterialStateProperty.all<Color>(Colors.grey.shade300),
-                                shape: MaterialStateProperty.all<RoundedRectangleBorder>(RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10.0),
-                                  side: BorderSide(color: Colors.red),
-                                )),
-                              ),
-                              onPressed: () {
-                                Clipboard.setData(
-                                    ClipboardData(text: "${_usernameController.text} : ${_passwordController.text}"));
-                                _showSnackbar('Copied to Clipboard');
-                              },
+                        style: TextStyle(fontWeight: FontWeight.bold),
+//                maxLength: 25,
+                        onFieldSubmitted: (_) {
+                          FocusScope.of(context).requestFocus(_passwordFocus);
+                        },
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return 'Please provide a username';
+                          }
+                          return null;
+                        },
+                      ),
+                      SizedBox(height: 5),
+                      TextFormField(
+                        controller: _passwordController,
+                        focusNode: _passwordFocus,
+                        keyboardType: TextInputType.text,
+                        textInputAction: TextInputAction.next,
+                        decoration: InputDecoration(
+                          labelText: 'Password',
+                          prefixIcon: GestureDetector(
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                              child: Icon(Icons.security),
+                            ),
+                            onTap: () {
+                              Clipboard.setData(ClipboardData(text: "${_passwordController.text}"));
+                              _showSnackbar('Copied to Clipboard');
+                            },
+                          ),
+                          suffixIcon: GestureDetector(
+                            child: Icon(Icons.remove_circle_outline),
+                            onTap: () {
+                              _passwordController.clear();
+                            },
+                          ),
+                        ),
+                        style: TextStyle(fontWeight: FontWeight.bold),
+//                maxLength: 25,
+                        onFieldSubmitted: (_) {
+                          FocusScope.of(context).requestFocus(_descriptionFocus);
+                        },
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return 'Please provide a password';
+                          }
+                          return null;
+                        },
+                      ),
+                      SizedBox(height: 5),
+                      TextFormField(
+                        controller: _descriptionController,
+                        focusNode: _descriptionFocus,
+                        keyboardType: TextInputType.text,
+                        textInputAction: TextInputAction.done,
+                        decoration: InputDecoration(
+                          labelText: 'Description',
+                          prefixIcon: GestureDetector(
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                              child: Icon(Icons.description),
+                            ),
+                            onTap: () {
+                              Clipboard.setData(ClipboardData(text: "${_descriptionController.text}"));
+                              _showSnackbar('Copied to Clipboard');
+                            },
+                          ),
+                          suffixIcon: GestureDetector(
+                            child: Icon(Icons.remove_circle_outline),
+                            onTap: () {
+                              _descriptionController.clear();
+                            },
+                          ),
+                        ),
+                        style: TextStyle(),
+                        onFieldSubmitted: (_) {},
+                        validator: (value) {
+                          return null;
+                        },
+                      ),
+                      SizedBox(height: 16),
+                      Row(
+                        children: [
+                          Text(
+                            'Modified Date: ',
+                            // style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          Text('${DateFormat('dd-MM-yyyy').format(_user.dateTime)}'),
+                        ],
+                      ),
+                      SizedBox(height: 16),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: CupertinoButton(
+                              color: Colors.green.shade300,
+                              child: Text(_isNew ? 'Add' : 'Change'),
+                              onPressed: _saveForm,
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
+                        ],
+                      ),
+                      SizedBox(height: 20),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Container(
+                              height: 50,
+                              child: OutlinedButton(
+                                child: Text('Copy \"USER : PASSWORD\"', style: TextStyle(fontWeight: FontWeight.bold)),
+                                style: ButtonStyle(
+                                  backgroundColor: MaterialStateProperty.all<Color>(Colors.grey.shade300),
+                                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10.0),
+                                    side: BorderSide(color: Colors.red),
+                                  )),
+                                ),
+                                onPressed: () {
+                                  Clipboard.setData(
+                                      ClipboardData(text: "${_usernameController.text} : ${_passwordController.text}"));
+                                  _showSnackbar('Copied to Clipboard');
+                                },
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+          ),
         ),
+  ),
       ),
     );
   }

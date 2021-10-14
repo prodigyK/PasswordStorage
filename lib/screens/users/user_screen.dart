@@ -80,88 +80,106 @@ class _UserScreenState extends State<UserScreen> {
         : users.where((user) => user.name.toLowerCase().contains(searchText.toLowerCase())).toList();
     _sortUsers();
 
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.green.shade200,
-        title: Text('Users (${users.length})'),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.sort_by_alpha),
-            onPressed: () {
-              setState(() {
-                sort = Sort.ALFABETIC;
-                asc = !asc;
-              });
-            },
-          ),
-          SizedBox(width: 10),
-          IconButton(
-            icon: Icon(Icons.sort),
-            onPressed: () {
-              setState(() {
-                sort = Sort.DATETIME;
-                asc = !asc;
-              });
-            },
-          ),
-          SizedBox(width: 10),
-          IconButton(
-            icon: Icon(FontAwesome5.user_plus),
-            onPressed: () {
-              Navigator.of(context).pushNamed(UserDetailScreen.routeName).then((value) => _updateUsers());
-            },
-          ),
-          SizedBox(width: 10),
-        ],
-      ),
-      body: isLoading
-          ? Center(child: CircularProgressIndicator())
-          : RefreshIndicator(
-              onRefresh: _updateUsers,
-              child: Column(
-                children: [
-                  Container(
-                    height: 50,
-                    decoration: BoxDecoration(
-                      border: Border.all(width: 0.5),
-                    ),
-                    child: CupertinoSearchTextField(
-                      controller: _searchController,
-                      backgroundColor: Colors.white,
-                      onChanged: (value) {
-                        setState(() {
-                          searchText = value;
-                        });
-                      },
-                      onSubmitted: (value) {
-                        // _search(value);
-                      },
-                      onSuffixTap: () {
-                        setState(() {
-                          searchText = '';
-                          _searchController.clear();
-                          isSearch = false;
-                        });
-                      },
-                    ),
-                  ),
-                  Expanded(
-                    child: ListView.builder(
-                      itemExtent: 60,
-                      itemCount: searchUsers.length,
-                      itemBuilder: (ctx, i) {
-                        return Container(
-                          decoration: BoxDecoration(
-                            border: Border(bottom: BorderSide(width: 0.3, color: Colors.grey)),
-                          ),
-                          child: UserItem(users: searchUsers, index: i, update: _updateUsers),
-                        );
-                      },
-                    ),
-                  )
-                ],
+    return Center(
+      child: LayoutBuilder(builder: (context, constraints) {
+        if (constraints.maxWidth > 600) {
+          return _buildScaffold(context, width: 600);
+        } else {
+          return _buildScaffold(context, width: double.infinity);
+        }
+      }),
+    );
+  }
+
+  Widget _buildScaffold(BuildContext context, {required double width}) {
+    return Container(
+      width: width,
+      child: ConstrainedBox(
+        constraints: BoxConstraints(maxWidth: width),
+        child: Scaffold(
+          appBar: AppBar(
+            backgroundColor: Colors.green.shade200,
+            title: Text('Users (${users.length})'),
+            actions: [
+              IconButton(
+                icon: Icon(Icons.sort_by_alpha),
+                onPressed: () {
+                  setState(() {
+                    sort = Sort.ALFABETIC;
+                    asc = !asc;
+                  });
+                },
               ),
-            ),
+              SizedBox(width: 10),
+              IconButton(
+                icon: Icon(Icons.sort),
+                onPressed: () {
+                  setState(() {
+                    sort = Sort.DATETIME;
+                    asc = !asc;
+                  });
+                },
+              ),
+              SizedBox(width: 10),
+              IconButton(
+                icon: Icon(FontAwesome5.user_plus),
+                onPressed: () {
+                  Navigator.of(context).pushNamed(UserDetailScreen.routeName).then((value) => _updateUsers());
+                },
+              ),
+              SizedBox(width: 10),
+            ],
+          ),
+          body: isLoading
+              ? Center(child: CircularProgressIndicator(color: Colors.blue, strokeWidth: 6))
+              : RefreshIndicator(
+                  onRefresh: _updateUsers,
+                  child: Column(
+                    children: [
+                      Container(
+                        height: 50,
+                        decoration: BoxDecoration(
+                          border: Border.all(width: 0.1),
+                        ),
+                        child: CupertinoSearchTextField(
+                          controller: _searchController,
+                          backgroundColor: Colors.transparent,
+                          onChanged: (value) {
+                            setState(() {
+                              searchText = value;
+                            });
+                          },
+                          onSubmitted: (value) {
+                            // _search(value);
+                          },
+                          onSuffixTap: () {
+                            setState(() {
+                              searchText = '';
+                              _searchController.clear();
+                              isSearch = false;
+                            });
+                          },
+                        ),
+                      ),
+                      Expanded(
+                        child: ListView.builder(
+                          itemExtent: 60,
+                          itemCount: searchUsers.length,
+                          itemBuilder: (ctx, i) {
+                            return Container(
+                              decoration: BoxDecoration(
+                                border: Border(bottom: BorderSide(width: 0.3, color: Colors.grey)),
+                              ),
+                              child: UserItem(users: searchUsers, index: i, update: _updateUsers),
+                            );
+                          },
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+        ),
+      ),
     );
   }
 }
