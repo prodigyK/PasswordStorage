@@ -26,35 +26,36 @@ class _MailboxAllScreenState extends State<MailboxAllScreen> {
   final _searchController = TextEditingController();
   String searchText = '';
   bool isDomain = false;
+  Domain? domain;
+  bool isLoading = false;
 
   @override
   void didChangeDependencies() async {
     if (firstInit) {
       final json = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-      Domain? domain = json['domain'];
-      if (domain == null) {
-        mailboxes = await Provider.of<MailboxRepository>(context, listen: false).getAllDocuments();
-      } else {
-        isDomain = true;
-        title = domain.name;
-        await Provider.of<MailboxRepository>(context, listen: false)
-            .collection()
-            .where(
-              'domain_id',
-              isEqualTo: domain.id,
-            )
-            .get()
-            .then((QuerySnapshot snapshot) {
-          snapshot.docs.forEach((json) {
-            mailboxes.add(Mailbox.fromJson(json.data() as Map<String, dynamic>, docID: json.id));
-          });
-        });
-      }
-      setState(() {});
+      domain = json['domain'];
+      await _fetchMailboxes();
       firstInit = false;
     }
 
     super.didChangeDependencies();
+  }
+
+  Future<void> _fetchMailboxes() async {
+    mailboxes.clear();
+    setState(() {
+      isLoading = true;
+    });
+    if (domain == null) {
+      mailboxes = await Provider.of<MailboxRepository>(context, listen: false).getMailboxes();
+    } else {
+      isDomain = true;
+      title = domain!.name;
+      mailboxes = await Provider.of<MailboxRepository>(context, listen: false).getMailboxesByDomainId(domain!.id);
+    }
+    setState(() {
+      isLoading = false;
+    });
   }
 
   @override
@@ -82,16 +83,9 @@ class _MailboxAllScreenState extends State<MailboxAllScreen> {
         constraints: BoxConstraints(maxWidth: width),
         child: Scaffold(
           appBar: AppBar(
-              title: Text(title, style: TextStyle(color: Colors.white)),
+              title: Text('All Mailboxes (${mailboxes.length})', style: TextStyle(color: Colors.white)),
               backgroundColor: Colors.blue.shade200,
               actions: [
-                IconButton(
-                  icon: Icon(Icons.search),
-                  onPressed: () {
-                    showSearch(context: context, delegate: MailSearchDelegate());
-                  },
-                ),
-                SizedBox(width: 20),
                 IconButton(
                   icon: Icon(Icons.add_box),
                   onPressed: () {
@@ -99,7 +93,10 @@ class _MailboxAllScreenState extends State<MailboxAllScreen> {
                       context,
                       MailboxDetailScreen.routeName,
                       arguments: {'isNew': true},
-                    );
+                    ).then((value) async {
+                      await _fetchMailboxes();
+                      setState(() {});
+                    });
                   },
                 )
               ]),
@@ -153,26 +150,32 @@ class _MailboxAllScreenState extends State<MailboxAllScreen> {
                     ),
                   // SizedBox(height: 5),
                   Expanded(
-                    child: ListView.builder(
-                        padding: EdgeInsets.only(top: 8.0, bottom: 16.0),
-                        itemCount: searchMailboxes.length,
-                        itemBuilder: (ctx, i) {
-                          return MailboxItem(
-                              mailbox: searchMailboxes.elementAt(i),
-                              navigate: () {
-                                Navigator.pushNamed(
-                                  context,
-                                  MailboxDetailScreen.routeName,
-                                  arguments: {
-                                    'isNew': false,
-                                    'mailbox': searchMailboxes.elementAt(i),
-                                  },
-                                ).then((value) async {
-                                  mailboxes = await Provider.of<MailboxRepository>(context, listen: false).getAllDocuments();
-                                  setState(() {});
-                                });
-                              });
-                        }),
+                    child: isLoading
+                        ? Center(child: CircularProgressIndicator())
+                        : ListView.builder(
+                            padding: EdgeInsets.only(top: 8.0, bottom: 16.0),
+                            itemCount: searchMailboxes.length,
+                            itemBuilder: (ctx, i) {
+                              return MailboxItem(
+                                  mailbox: searchMailboxes.elementAt(i),
+                                  navigate: () {
+                                    Navigator.pushNamed(
+                                      context,
+                                      MailboxDetailScreen.routeName,
+                                      arguments: {
+                                        'isNew': false,
+                                        'mailbox': searchMailboxes.elementAt(i),
+                                      },
+                                    ).then((value) async {
+                                      print('value = $value');
+                                      print('isDomain = $isDomain');
+                                      print('domain = ${domain!.name}');
+
+                                      await _fetchMailboxes();
+                                      setState(() {});
+                                    });
+                                  });
+                            }),
                   ),
                 ],
               ),

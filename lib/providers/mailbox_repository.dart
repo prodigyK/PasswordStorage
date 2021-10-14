@@ -4,8 +4,10 @@ import 'package:password_storage_app/models/mailbox.dart';
 
 class MailboxRepository with ChangeNotifier {
   FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  List<Mailbox> _mailboxes = [];
 
   FirebaseFirestore get instance => _firestore;
+  List<Mailbox> get mailboxes => [..._mailboxes];
 
   Stream<QuerySnapshot> snapshots() {
     return _firestore.collection('mailboxes').snapshots();
@@ -27,7 +29,12 @@ class MailboxRepository with ChangeNotifier {
     return collection().doc(id).update({'description': ''}).then((value) => true).catchError((error) => false);
   }
 
-  Future<List<Mailbox>> getAllDocuments() async {
+  Future<List<Mailbox>> getMailboxesByDomainId(String id) async {
+    await getMailboxes();
+    return _mailboxes.where((mailbox) => mailbox.domainId == id).toList();
+  }
+
+  Future<List<Mailbox>> getMailboxes() async {
     List<Mailbox> mailboxes = [];
     final querySnapshot = await collection().get();
     querySnapshot.docs.forEach((mailbox) {
@@ -42,11 +49,12 @@ class MailboxRepository with ChangeNotifier {
         ),
       );
     });
-    return mailboxes;
+    _mailboxes = mailboxes;
+    return [...mailboxes];
   }
 
   Future<bool> contains(String mailbox, {String? docID}) async {
-    final mailboxes = await getAllDocuments();
+    final mailboxes = await getMailboxes();
     bool exists = mailboxes.any((element) => element.name == mailbox);
     if (docID == null) {
       return exists;

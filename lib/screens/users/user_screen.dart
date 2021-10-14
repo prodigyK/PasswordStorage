@@ -36,9 +36,14 @@ class _UserScreenState extends State<UserScreen> {
   @override
   void didChangeDependencies() async {
     if (firstInit) {
+      setState(() {
+        isLoading = true;
+      });
       users = await Provider.of<UserFirestoreRepository>(context, listen: false).getAllDocuments();
       firstInit = false;
-      setState(() {});
+      setState(() {
+        isLoading = false;
+      });
     }
     super.didChangeDependencies();
   }
@@ -78,7 +83,7 @@ class _UserScreenState extends State<UserScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.green.shade200,
-        title: Text('Users'),
+        title: Text('Users (${users.length})'),
         actions: [
           IconButton(
             icon: Icon(Icons.sort_by_alpha),
@@ -109,52 +114,54 @@ class _UserScreenState extends State<UserScreen> {
           SizedBox(width: 10),
         ],
       ),
-      body: RefreshIndicator(
-        onRefresh: _updateUsers,
-        child: Column(
-          children: [
-            Container(
-              height: 50,
-              decoration: BoxDecoration(
-                border: Border.all(width: 0.5),
-              ),
-              child: CupertinoSearchTextField(
-                controller: _searchController,
-                backgroundColor: Colors.white,
-                onChanged: (value) {
-                  setState(() {
-                    searchText = value;
-                  });
-                },
-                onSubmitted: (value) {
-                  // _search(value);
-                },
-                onSuffixTap: () {
-                  setState(() {
-                    searchText = '';
-                    _searchController.clear();
-                    isSearch = false;
-                  });
-                },
+      body: isLoading
+          ? Center(child: CircularProgressIndicator())
+          : RefreshIndicator(
+              onRefresh: _updateUsers,
+              child: Column(
+                children: [
+                  Container(
+                    height: 50,
+                    decoration: BoxDecoration(
+                      border: Border.all(width: 0.5),
+                    ),
+                    child: CupertinoSearchTextField(
+                      controller: _searchController,
+                      backgroundColor: Colors.white,
+                      onChanged: (value) {
+                        setState(() {
+                          searchText = value;
+                        });
+                      },
+                      onSubmitted: (value) {
+                        // _search(value);
+                      },
+                      onSuffixTap: () {
+                        setState(() {
+                          searchText = '';
+                          _searchController.clear();
+                          isSearch = false;
+                        });
+                      },
+                    ),
+                  ),
+                  Expanded(
+                    child: ListView.builder(
+                      itemExtent: 60,
+                      itemCount: searchUsers.length,
+                      itemBuilder: (ctx, i) {
+                        return Container(
+                          decoration: BoxDecoration(
+                            border: Border(bottom: BorderSide(width: 0.3, color: Colors.grey)),
+                          ),
+                          child: UserItem(users: searchUsers, index: i, update: _updateUsers),
+                        );
+                      },
+                    ),
+                  )
+                ],
               ),
             ),
-            Expanded(
-              child: ListView.builder(
-                itemExtent: 60,
-                itemCount: searchUsers.length,
-                itemBuilder: (ctx, i) {
-                  return Container(
-                    decoration: BoxDecoration(
-                      border: Border(bottom: BorderSide(width: 0.3, color: Colors.grey)),
-                    ),
-                    child: UserItem(users: searchUsers, index: i, update: _updateUsers),
-                  );
-                },
-              ),
-            )
-          ],
-        ),
-      ),
     );
   }
 }

@@ -1,14 +1,29 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:password_storage_app/models/domain.dart';
+import 'package:password_storage_app/models/mailbox.dart';
 import 'package:password_storage_app/models/service.dart';
 import 'package:password_storage_app/providers/mail_domain_repository.dart';
 import 'package:password_storage_app/providers/mail_service_repository.dart';
+import 'package:password_storage_app/providers/mailbox_repository.dart';
 import 'package:password_storage_app/screens/mailboxes/mailboxes_all_screen.dart';
 import 'package:provider/provider.dart';
 
-class MailboxesByDomainsScreen extends StatelessWidget {
+class MailboxesByDomainsScreen extends StatefulWidget {
   static const String routeName = '/mail-by-domains';
+
+  @override
+  State<MailboxesByDomainsScreen> createState() => _MailboxesByDomainsScreenState();
+}
+
+class _MailboxesByDomainsScreenState extends State<MailboxesByDomainsScreen> {
+  List<Mailbox> mailboxes = [];
+
+  @override
+  void didChangeDependencies() async {
+    mailboxes = await Provider.of<MailboxRepository>(context, listen: false).getMailboxes();
+    super.didChangeDependencies();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +50,7 @@ class MailboxesByDomainsScreen extends StatelessWidget {
         body: Container(
           margin: EdgeInsets.only(top: 8.0),
           child: FutureBuilder(
-              future: Provider.of<MailDomainRepository>(context, listen: false).collection().get(),
+              future: Provider.of<MailDomainRepository>(context, listen: false).collection().orderBy('name').get(),
               builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
                 if (snapshot.hasData) {
                   final domainsDocs = snapshot.data!.docs;
@@ -53,8 +68,15 @@ class MailboxesByDomainsScreen extends StatelessWidget {
                             itemBuilder: (ctx, i) {
                               final domainRef = domainsDocs[i];
                               final service = services.firstWhere((element) => element.id == domainRef['service_id']);
+                              int mailboxItems =
+                                  mailboxes.where((item) => item.domainId == domainRef.id).toList().length;
                               return DomainItem(
-                                  docs: domainsDocs, index: i, key: ValueKey(domainRef.id), service: service.name);
+                                key: ValueKey(domainRef.id),
+                                docs: domainsDocs,
+                                index: i,
+                                service: service.name,
+                                items: mailboxItems,
+                              );
                             });
                       }
                       return Center(child: CircularProgressIndicator());
@@ -76,16 +98,19 @@ class DomainItem extends StatelessWidget {
     this.docs,
     this.service,
     this.index,
+    required this.items,
   }) : super(key: key);
 
   final docs;
   final index;
   final String? service;
+  final int items;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       child: Container(
+        // height: 65,
         margin: EdgeInsets.symmetric(horizontal: 8.0, vertical: 2.0),
         padding: EdgeInsets.symmetric(vertical: 2.0),
         decoration: BoxDecoration(borderRadius: BorderRadius.circular(16.0)),
@@ -95,9 +120,20 @@ class DomainItem extends StatelessWidget {
           color: Colors.grey.shade100,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
           child: ListTile(
-            leading: Icon(
-              Icons.domain,
-              size: 30,
+            horizontalTitleGap: 30,
+            leading: CircleAvatar(
+              backgroundColor: Colors.blueGrey.shade200,
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 0.0),
+                child: Text(
+                  items.toString(),
+                  style: TextStyle(
+                    fontSize: 24,
+                    color: Colors.white,
+                    fontFamily: 'RobotoCondensed',
+                  ),
+                ),
+              ),
             ),
             title: Text(
               docs[index]['name'],
