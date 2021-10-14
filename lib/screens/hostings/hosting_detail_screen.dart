@@ -158,7 +158,7 @@ class _HostingDetailsScreenState extends State<HostingDetailsScreen> {
       child: ConstrainedBox(
         constraints: BoxConstraints(maxWidth: width),
         child: Scaffold(
-          backgroundColor: Colors.white,
+          backgroundColor: Color.fromRGBO(242, 242, 247, 1),
           appBar: AppBar(
             title: Text('Hosting Details'),
             backgroundColor: Colors.orange.shade200,

@@ -134,7 +134,7 @@ class _MailServicesDetailScreen extends State<MailServicesDetailScreen> {
             )
           ],
         ),
-        backgroundColor: Colors.white,
+        backgroundColor: Color.fromRGBO(242, 242, 247, 1),
         body: Form(
             key: _formKey,
             child: Column(

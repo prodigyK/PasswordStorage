@@ -1,5 +1,3 @@
-
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:password_storage_app/models/user.dart';
@@ -9,11 +7,8 @@ class UserFirestoreRepository with ChangeNotifier {
   List<User> _users = [];
 
   List<User> get users => [..._users];
-  FirebaseFirestore get instance => _firestore;
 
-  Stream<QuerySnapshot> snapshots() {
-    return _firestore.collection('users').snapshots();
-  }
+  FirebaseFirestore get instance => _firestore;
 
   CollectionReference collection() {
     return _firestore.collection('users');
@@ -31,17 +26,16 @@ class UserFirestoreRepository with ChangeNotifier {
     return collection().doc(user.id).delete();
   }
 
-
   Future<List<User>> getAllDocuments() async {
     List<User> users = [];
     final querySnapshot = await collection().get();
     querySnapshot.docs.forEach((user) {
-      users.add(User.fromJson(user.data() as Map<String, dynamic>, docID: user.id),
+      users.add(
+        User.fromJson(user.data() as Map<String, dynamic>, docID: user.id),
       );
     });
     _users = users;
     notifyListeners();
     return users;
   }
-
 }

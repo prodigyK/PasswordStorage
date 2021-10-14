@@ -7,11 +7,6 @@ class MailDomainRepository with ChangeNotifier {
 
   FirebaseFirestore get instance => _firestore;
 
-
-  Stream<QuerySnapshot> snapshots() {
-    return collection().snapshots();
-  }
-
   CollectionReference collection() {
     return _firestore.collection('domains');
   }

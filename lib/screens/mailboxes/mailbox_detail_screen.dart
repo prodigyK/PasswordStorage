@@ -148,7 +148,6 @@ class _MailboxDetailScreenState extends State<MailboxDetailScreen> {
           title: isNew! ? Text('Add Mailbox') : Text('Modify Mailbox'),
           backgroundColor: Colors.blue.shade200,
         ),
-        backgroundColor: Colors.white,
         body: Container(
           margin: EdgeInsets.symmetric(horizontal: 16.0),
           child: Form(

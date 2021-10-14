@@ -9,10 +9,6 @@ class MailboxRepository with ChangeNotifier {
   FirebaseFirestore get instance => _firestore;
   List<Mailbox> get mailboxes => [..._mailboxes];
 
-  Stream<QuerySnapshot> snapshots() {
-    return _firestore.collection('mailboxes').snapshots();
-  }
-
   CollectionReference collection() {
     return _firestore.collection('mailboxes');
   }
