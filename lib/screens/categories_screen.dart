@@ -1,4 +1,6 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:password_storage_app/models/user.dart';
 import 'package:password_storage_app/providers/auth.dart';
@@ -9,7 +11,42 @@ import 'package:provider/provider.dart';
 import '../app_data.dart';
 import '../widgets/category_item.dart';
 
-class CategoriesScreen extends StatelessWidget {
+class CategoriesScreen extends StatefulWidget {
+  @override
+  State<CategoriesScreen> createState() => _CategoriesScreenState();
+}
+
+class _CategoriesScreenState extends State<CategoriesScreen> {
+  @override
+  void initState() {
+    requestPermissions();
+    super.initState();
+  }
+
+  void requestPermissions() async {
+    FirebaseMessaging messaging = FirebaseMessaging.instance;
+
+    NotificationSettings settings = await messaging.requestPermission(
+      alert: true,
+      announcement: false,
+      badge: true,
+      carPlay: false,
+      criticalAlert: false,
+      provisional: false,
+      sound: false,
+    );
+
+    if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+      print('User granted permission');
+    } else {
+      print('User declined or has not accepted permission');
+    }
+
+    if(!kIsWeb) {
+      messaging.subscribeToTopic('passStore');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
