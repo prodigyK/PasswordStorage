@@ -45,9 +45,13 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+/android/app/google-services.json
+/ios/Runner/GoogleService-Info.plist
+/macos/Runner/GoogleService-Info.plist
 /.env
 /lib/app_data.dart
 /pubspec.lock
 /.gradle
 /node_modules/
+.firebaserc
 
